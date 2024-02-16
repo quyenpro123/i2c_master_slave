@@ -30,7 +30,7 @@ module i2c_data_path_block (
             counter_data_ack_o <= 9                                     ;
         else if (counter_detect_edge_i == (2 * prescaler_i - 1) &&          //when posedge of scl
                 (write_addr_cnt_i || write_ack_cnt_i ||
-                read_data_cnt_i || read_ack_cnt_i))
+                read_data_cnt_i || write_data_cnt_i || read_ack_cnt_i))
             
             counter_data_ack_o = counter_data_ack_o - 1                 ;
         
@@ -49,12 +49,12 @@ module i2c_data_path_block (
                 temp_sda_o <= 0                                         ;
             else if (write_addr_cnt_i)
                 if (counter_detect_edge_i == (prescaler_i - 1))               // write addr after negedge of scl 1 i2c core clock
-                    temp_sda_o <= addr_rw_i[counter_data_ack_o - 1]     ;
+                    temp_sda_o <= addr_rw_i[counter_data_ack_o - 2]     ;
                 else
                     temp_sda_o <= temp_sda_o                            ;
             else if (write_data_cnt_i)
                 if (counter_detect_edge_i == (prescaler_i - 1))               // write data after negedge of scl 1 i2c core clock
-                    temp_sda_o <= data_i[counter_data_ack_o - 1]        ;
+                    temp_sda_o <= data_i[counter_data_ack_o - 2]        ;
                 else
                     temp_sda_o <= temp_sda_o                            ;
             else if (write_ack_cnt_i)
@@ -83,7 +83,7 @@ module i2c_data_path_block (
                 data_o[counter_data_ack_o - 1] <= sda_i                 ;
 
             else
-                data_o[counter_data_ack_o - 1] <= data_o[counter_data_ack_o - 1]    ;
+                data_o[counter_data_ack_o - 1] <= data_o[counter_data_ack_o - 2]    ;
     end
 
 
