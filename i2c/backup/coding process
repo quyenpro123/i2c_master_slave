@@ -1,0 +1,8 @@
+ - 0h47 - 31 / 1 / 2024: start condition, slave's addr transfering, read addr ack, write data
+                         of master fsm (testbench) are done
+ - the next task: handle stop condition, code datapath and clock generator to generate start, 
+                  addr transfer, read addr ack, transfer 1 byte data and stop condition
+                  simulation code
+
+- note: detach always blocks into small blocks for easy to handle
+- 18h00 1/2/2024: done start condition, write addr/data, read data 
