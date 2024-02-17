@@ -15,8 +15,12 @@ module i2c_master_top(
     output sda_o                                                    ,
     output scl_o                                                    
 );
+    
+    wire temp_sda_o                                                 ;
+    wire tem_scl_o                                                  ;
     wire [7:0] counter_detect_edge                                  ;
     wire [7:0] counter_data_ack                                     ;
+    wire [7:0] counter_state_done_time_repeat_start                 ;
 
     wire start_cnt                                                          ;// start signal to datapath and clock generator						    
     wire write_addr_cnt                                                     ;// write addr signal to datapath and clock generator to transfer addr of slave												
@@ -29,12 +33,17 @@ module i2c_master_top(
     wire scl_en				                                              ;// enable scl
     wire sda_en                                                             ;// enable sda 
     wire [7:0] data_o                                                         ;
+    
 
+    assign sda_o = sda_en == 1 ? temp_sda_o : 1'bz                  ;
+    assign scl_o = scl_en == 1 ? tem_scl_o : 1                      ;
+    
     i2c_clock_gen_block clock_gen(
         .i2c_core_clock_i(i2c_core_clock_i)                         ,
         .reset_bit_i(reset_bit_i)                                   ,
+        .scl_en_i(scl_en)                                           ,
         .prescaler_i(prescaler_i)                                   ,
-        .scl_o(scl_o)                                               ,
+        .scl_o(tem_scl_o)                                          ,
         .counter_detect_edge_o(counter_detect_edge)                     
     );
 
@@ -55,7 +64,8 @@ module i2c_master_top(
         .repeat_start_cnt_i(repeat_start_cnt)                       ,
         .counter_detect_edge_i(counter_detect_edge)                 ,
         .prescaler_i(prescaler_i)                                   ,
-        .sda_o(sda_o)                                               ,
+        .counter_state_done_time_repeat_start_i(counter_state_done_time_repeat_start),
+        .sda_o(temp_sda_o)                                          ,
         .data_o(data_o)                                             ,
         .counter_data_ack_o(counter_data_ack)
     );
@@ -84,6 +94,7 @@ module i2c_master_top(
         .stop_cnt_o(stop_cnt)                                           ,	// stop signal to datapath and clock generator 	
         .repeat_start_cnt_o(repeat_start_cnt)                           , // repeat start signal to datapath and clock generator					    
         .scl_en_o(scl_en)				                                , // enable scl
-    .sda_en_o(sda_en)                                                 // enable sda 	
+        .sda_en_o(sda_en)                                               ,  // enable sda 	
+        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)
     );
 endmodule

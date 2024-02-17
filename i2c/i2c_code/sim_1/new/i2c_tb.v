@@ -10,7 +10,7 @@ module i2c_tb(
     reg repeat_start_bit_i                                        ;	// repeat start bit from cmd register		
     reg trans_fifo_empty_i                                        ;
     reg rev_fifo_full_i                                           ;
-    reg [7:0] state_done_time_i                                         ;
+    reg [7:0] state_done_time_i                                   ;
     reg ack_bit_i                                                 ;
     reg sda_i                                                     ;
 
@@ -42,7 +42,7 @@ module i2c_tb(
         data_i = 0                                                  ;
         addr_rw_i = 0                                               ;
         prescaler_i = 4                                             ;
-        repeat_start_bit_i = 0                                      ;
+        repeat_start_bit_i = 1                                      ;
         trans_fifo_empty_i = 0                                      ;
         rev_fifo_full_i = 0                                         ;
         state_done_time_i = 4                                       ;
@@ -56,16 +56,19 @@ module i2c_tb(
         #20
 
         enable_bit_i = 1                                            ;
-        data_i = 20                                                 ;
+        data_i = 8'b01010101                                        ;
         addr_rw_i = 8'b10101010                                     ;
 
         #50
 
         enable_bit_i = 0                                            ;
         
-        #500
-
-        trans_fifo_empty_i = 1                                      ;
+        #200
+        sda_i = 1                                                   ;
+        #50
+        addr_rw_i = 8'b11110000                                     ;
+        #140
+        repeat_start_bit_i = 0                                      ;
     end
 
     always #1 i2c_core_clock_i = ~i2c_core_clock_i                  ;
