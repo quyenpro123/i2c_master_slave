@@ -41,7 +41,6 @@ module i2c_master_top(
     i2c_clock_gen_block clock_gen(
         .i2c_core_clock_i(i2c_core_clock_i)                         ,
         .reset_bit_i(reset_bit_i)                                   ,
-        .scl_en_i(scl_en)                                           ,
         .prescaler_i(prescaler_i)                                   ,
         .scl_o(tem_scl_o)                                          ,
         .counter_detect_edge_o(counter_detect_edge)                     

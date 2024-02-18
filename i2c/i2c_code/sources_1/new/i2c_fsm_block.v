@@ -167,13 +167,13 @@ module i2c_fsm_block(
             end
             //---------------------------------------------------------
             write_data_ack: begin                                                                         //if rev fifo is not full, continue read data
-                if (counter_data_ack_i == 0)
-                    if (rev_fifo_full_i == 0)
+                if (counter_data_ack_i == 9 && counter_detect_edge_i == prescaler_i) 
+                    if (rev_fifo_full_i == 0 )
                             next_state = read_data                                                      ;
                     else
                         if (repeat_start_bit_i == 1)                
                             next_state = repeat_start                                                   ;
-                        else
+                        else 
                             next_state = stop                                                           ;
                 else
                     next_state = write_data_ack                                                         ;
@@ -307,7 +307,10 @@ module i2c_fsm_block(
             end
             //---------------------------------------------------------
             write_data_ack: begin
-                sda_en_o = 1                                                ;       
+                if (counter_detect_edge_i == (prescaler_i - 2))
+                    sda_en_o = 1                                            ;
+                else
+                    sda_en_o = sda_en_o                                     ;       
                 scl_en_o = 1                                                ;			
                 start_cnt_o = 0                                             ;                                                						    
                 write_addr_cnt_o = 0                                        ;                                            							
@@ -339,11 +342,14 @@ module i2c_fsm_block(
             end
             //---------------------------------------------------------
             stop: begin
-                if (counter_detect_edge_i == (prescaler_i - 2))
+                if (counter_detect_edge_i == (prescaler_i - 1))
                     sda_en_o = 1                                            ;
                 else
-                    sda_en_o = sda_en_o                                     ;      
-                scl_en_o = 1                                                ;			
+                    sda_en_o = sda_en_o                                     ;
+                if (counter_detect_edge_i == (2 * prescaler_i - 1) )
+                    scl_en_o = 0                                            ;
+                else
+                    scl_en_o = scl_en_o                                     ;			
                 start_cnt_o = 0                                             ;                                                						    
                 write_addr_cnt_o = 0                                        ;                                            							
                 write_ack_cnt_o = 0                                         ;

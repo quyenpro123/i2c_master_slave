@@ -1,7 +1,6 @@
 module i2c_clock_gen_block(
     input i2c_core_clock_i                                                                  , //i2c core clock
     input reset_bit_i                                                                       , //reset signal from cpu
-    input scl_en_i                                                                          ,
     input [7:0] prescaler_i                                                                 , //value of prescaler register
     output scl_o                                                                            , //clock output from clock generator
     output reg [7:0] counter_detect_edge_o                                                  //counter for detecting edge of scl, 
