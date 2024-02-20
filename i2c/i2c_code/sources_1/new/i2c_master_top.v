@@ -30,19 +30,20 @@ module i2c_master_top(
     wire read_ack_cnt                                                       ;// read ack from slave
     wire stop_cnt                                                           ;// stop signal to datapath and clock generator 	
     wire repeat_start_cnt                                                   ;// repeat start signal to datapath and clock generator					    
-    wire scl_en				                                              ;// enable scl
+    wire scl_en				                                                ;// enable scl
     wire sda_en                                                             ;// enable sda 
-    wire [7:0] data_o                                                         ;
+    wire [7:0] data_o                                                       ;
     
-
+    
     assign sda_o = sda_en == 1 ? temp_sda_o : 1'bz                  ;
     assign scl_o = scl_en == 1 ? tem_scl_o : 1                      ;
+    //pullup(sda_o)                                                 ;
     
     i2c_clock_gen_block clock_gen(
         .i2c_core_clock_i(i2c_core_clock_i)                         ,
         .reset_bit_i(reset_bit_i)                                   ,
         .prescaler_i(prescaler_i)                                   ,
-        .scl_o(tem_scl_o)                                          ,
+        .scl_o(tem_scl_o)                                           ,
         .counter_detect_edge_o(counter_detect_edge)                     
     );
 
@@ -73,12 +74,12 @@ module i2c_master_top(
         .i2c_core_clock_i(i2c_core_clock_i)                             ,	// i2c core clock
         .enable_bit_i(enable_bit_i)                                     , // enable bit from cmd register                  
         .reset_bit_i(reset_bit_i)                                       , // reset bit from cmd register	
-        .rw_bit_i(addr_rw_i[0])                                           , //addr of slave and rw bit
+        .rw_bit_i(addr_rw_i[0])                                         , //addr of slave and rw bit
         .sda_i(sda_i)                                                   , // sda line input	
         .repeat_start_bit_i(repeat_start_bit_i)                         ,	// repeat start bit from cmd register					         
         .trans_fifo_empty_i(trans_fifo_empty_i)                         ,	// status of trans fifo from fifo block 					         
         .rev_fifo_full_i(rev_fifo_full_i)                               , // status of rev fifo from fifo block
-        .state_done_time_i(state_done_time_i)                             , //state done time 
+        .state_done_time_i(state_done_time_i)                           , //state done time 
         .counter_detect_edge_i(counter_detect_edge)                     , //counter detect edge from clock generator
         .counter_data_ack_i(counter_data_ack)                           , //counter data, ack from datapath
         .prescaler_i(prescaler_i)                                       , //value of prescaler register

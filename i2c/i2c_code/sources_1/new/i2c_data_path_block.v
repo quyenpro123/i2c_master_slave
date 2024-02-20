@@ -42,24 +42,24 @@ module i2c_data_path_block (
         if (~reset_bit_i)
             temp_sda_o <= 1                                                                 ;  
         else
-        begin
-            if (start_cnt_i == 1)
-                temp_sda_o <= 0                                                             ;
-            else if (write_addr_cnt_i && counter_detect_edge_i == (prescaler_i - 1))        // write addr after negedge of scl 1 i2c core clock        
-                temp_sda_o <= addr_rw_i[counter_data_ack_o - 2]                             ;
-            else if (write_data_cnt_i && counter_detect_edge_i == (prescaler_i - 1))        // write data after negedge of scl 1 i2c core clock            
-                temp_sda_o <= data_i[counter_data_ack_o - 2]                                ;
-            else if (write_ack_cnt_i && counter_detect_edge_i == (prescaler_i - 1))         // write ack after negedge of scl 1 i2c core clock
-                temp_sda_o <= ack_bit_i                                                     ;
-            else if (repeat_start_cnt_i)                                                    //not handle yet
-                if (counter_detect_edge_i == (prescaler_i - 1) 
-                && counter_state_done_time_repeat_start_i > (prescaler_i - 1))
-                    temp_sda_o <= 1                                                         ;
-                else if (counter_state_done_time_repeat_start_i == (prescaler_i - 3))
-                    temp_sda_o <= 0                                                         ;
-            else if (stop_cnt_i && counter_detect_edge_i == (prescaler_i - 1))                  
-                temp_sda_o <= 0                                                             ;   
-        end
+            begin
+                if (start_cnt_i == 1)
+                    temp_sda_o <= 0                                                             ;
+                else if (write_addr_cnt_i && counter_detect_edge_i == (prescaler_i - 2))        // write addr after negedge of scl 1 i2c core clock        
+                    temp_sda_o <= addr_rw_i[counter_data_ack_o - 2]                             ;
+                else if (write_data_cnt_i && counter_detect_edge_i == (prescaler_i - 2))        // write data after negedge of scl 1 i2c core clock            
+                    temp_sda_o <= data_i[counter_data_ack_o - 2]                                ;
+                else if (write_ack_cnt_i && counter_detect_edge_i == (prescaler_i - 2))         // write ack after negedge of scl 1 i2c core clock
+                    temp_sda_o <= ack_bit_i                                                     ;
+                else if (stop_cnt_i && counter_detect_edge_i == (prescaler_i - 2))                  
+                    temp_sda_o <= 0                                                             ;
+                else if (repeat_start_cnt_i)                                                    //not handle yet
+                    if (counter_state_done_time_repeat_start_i > 1)
+                        temp_sda_o <= 1                                                         ;
+                    else if (counter_state_done_time_repeat_start_i == 1)
+                        temp_sda_o <= 0                                                         ;
+                  
+            end
     end
 
     //handle when datapath read
