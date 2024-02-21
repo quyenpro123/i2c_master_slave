@@ -12,8 +12,8 @@ module i2c_master_top(
     input ack_bit_i                                                 ,
     input sda_i                                                     ,
 
-    output sda_o                                                    ,
-    output scl_o                                                    
+    inout sda_o                                                    ,
+    inout scl_o                                                    
 );
     
     wire temp_sda_o                                                 ;
@@ -37,8 +37,7 @@ module i2c_master_top(
     
     assign sda_o = sda_en == 1 ? temp_sda_o : 1'bz                  ;
     assign scl_o = scl_en == 1 ? tem_scl_o : 1                      ;
-    //pullup(sda_o)                                                 ;
-    
+    //pullup(sda_o)                                                   ;
     i2c_clock_gen_block clock_gen(
         .i2c_core_clock_i(i2c_core_clock_i)                         ,
         .reset_bit_i(reset_bit_i)                                   ,

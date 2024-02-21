@@ -69,13 +69,15 @@ module i2c_fsm_block(
      begin
         
         if (~reset_bit_i)
-            counter_state_done_time_repeat_start_o <= (2 * prescaler_i - 1)                                                       ;
+            counter_state_done_time_repeat_start_o <= (2 * prescaler_i - 1)                                                      ;
         else
             if (current_state == repeat_start
                     && counter_state_done_time_repeat_start_o != 0 && counter_detect_edge_i > (prescaler_i - 1))                              //in repeat_start state, start counter clock 
                 counter_state_done_time_repeat_start_o <= counter_state_done_time_repeat_start_o - 1                              ;
-            else if (counter_state_done_time_repeat_start_o == 0)   
-                    counter_state_done_time_repeat_start_o <= (2 * prescaler_i - 1)                                               ;
+            else if (next_state == repeat_start && (current_state == read_data_ack || current_state == read_addr_ack))   
+                counter_state_done_time_repeat_start_o <= (2 * prescaler_i - 1)                                                   ;
+            else if (next_state == repeat_start && current_state == write_data_ack)
+                counter_state_done_time_repeat_start_o <= prescaler_i + 1                                                         ;
             else
                 counter_state_done_time_repeat_start_o <= counter_state_done_time_repeat_start_o                                  ;
     end
@@ -335,7 +337,7 @@ module i2c_fsm_block(
                     sda_en_o = 1                                            ;
                 else
                     sda_en_o = sda_en_o                                     ;      
-                if (counter_detect_edge_i == (2 * prescaler_i - 2) && counter_state_done_time_repeat_start_o < prescaler_i)
+                if (counter_state_done_time_repeat_start_o < prescaler_i)
                     scl_en_o = 0                                            ;
                 else
                     scl_en_o = scl_en_o                                     ;			
