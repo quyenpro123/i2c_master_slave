@@ -1,4 +1,6 @@
-module i2c_fifo_block();
+module i2c_fifo_block(
+    
+);
 
 
 endmodule
