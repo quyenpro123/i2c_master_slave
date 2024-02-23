@@ -54,7 +54,7 @@ module i2c_tb(
         #20
         enable_bit_i = 1                                            ;
         data_i = 8'b01010101                                        ;
-        addr_rw_i = 8'b10101011                                     ;
+        addr_rw_i = 8'b10101010                                     ;
 
         #50
 
