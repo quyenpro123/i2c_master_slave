@@ -33,7 +33,7 @@ module i2c_fsm_block(
 );
     localparam IDLE = 0							                                            ;
     localparam START = 1 							                                        ;
-    localparam addr = 2							                                            ;
+    localparam ADDR = 2							                                            ;
     localparam read_addr_ack = 3						                                    ;
     localparam write_data = 4						                                        ;
     localparam read_data = 5						                                        ;
@@ -62,7 +62,7 @@ module i2c_fsm_block(
                         && counter_state_done_time_start_stop != 0 && counter_detect_edge_i > (prescaler_i - 1))                     //in start or stop state, start counter clock 
                     counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1                                    ;
                 else if (counter_state_done_time_start_stop == 0 
-                        || (current_state == addr && counter_state_done_time_start_stop == 1))   
+                        || (current_state == ADDR && counter_state_done_time_start_stop == 1))   
                     counter_state_done_time_start_stop <= state_done_time_i                                                         ;
                 else
                     counter_state_done_time_start_stop <= counter_state_done_time_start_stop                                        ;
@@ -143,16 +143,16 @@ module i2c_fsm_block(
             //----------------------------------------------------------
             START: begin                                                                                //hold 4 cylcle i2c core clock before transfer to next state
                 if (counter_state_done_time_start_stop == 1)
-                    next_state = addr                                                                   ;
+                    next_state = ADDR                                                                   ;
                 else
                     next_state = START                                                                  ;
             end
             //---------------------------------------------------------
-            addr: begin
+            ADDR: begin
                 if (counter_data_ack_i == 1)
                     next_state = read_addr_ack                                                          ;
                 else
-                    next_state = addr                                                                   ;
+                    next_state = ADDR                                                                   ;
             end 
             //---------------------------------------------------------
             read_addr_ack: begin                                                                        //read ack when scl is positive edge
@@ -220,7 +220,7 @@ module i2c_fsm_block(
             //---------------------------------------------------------
             repeat_start: begin
                  if (counter_state_done_time_repeat_start_o == 0)
-                    next_state = addr                                                                   ;
+                    next_state = ADDR                                                                   ;
                 else
                     next_state = repeat_start                                                           ;
             end
@@ -242,6 +242,8 @@ module i2c_fsm_block(
     //current state to output
     always @*
     begin
+//         sda_en_o = 0                                                ;     
+//         scl_en_o = 0                                                ;
         case (current_state)
             //---------------------------------------------------------
             IDLE: begin
@@ -273,7 +275,7 @@ module i2c_fsm_block(
                 repeat_start_cnt_o = 0                                      ;
             end
             //---------------------------------------------------------
-            addr: begin
+            ADDR: begin
                 sda_en_o = 1                                                ;     
                 scl_en_o = 1                                                ;
                 start_cnt_o = 0                                             ;

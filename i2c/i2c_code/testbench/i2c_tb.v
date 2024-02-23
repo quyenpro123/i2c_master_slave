@@ -12,11 +12,16 @@ module i2c_tb(
     reg rev_fifo_full_i                                           ;
     reg [7:0] state_done_time_i                                   ;
     reg ack_bit_i                                                 ;
-    reg sda_i                                                     ;
+    
+    wire sda_i                                                    ;
 
     wire sda_o                                                    ;
     wire scl_o                                                    ;
-    
+    reg tb_sda_o_enable                                           ;
+    reg tb_sda_o                                                  ;
+    assign sda_o = tb_sda_o_enable ? tb_sda_o : 1'bz              ;
+    assign sda_i = sda_o                                          ;
+    pullup(sda_o)                                                 ;
     i2c_master_top master_top(
         .i2c_core_clock_i(i2c_core_clock_i)                       ,
         .reset_bit_i(reset_bit_i)                                 ,
@@ -36,18 +41,19 @@ module i2c_tb(
 
     initial 
     begin
+        tb_sda_o_enable = 0                                         ;     
+        tb_sda_o = 0                                                ;
         i2c_core_clock_i = 1                                        ;
         reset_bit_i = 0                                             ;
         enable_bit_i = 0                                            ;
         data_i = 0                                                  ;
         addr_rw_i = 0                                               ;
-        prescaler_i = 10                                             ;
+        prescaler_i = 10                                            ;
         repeat_start_bit_i = 1                                      ;
         trans_fifo_empty_i = 0                                      ;
         rev_fifo_full_i = 0                                         ;
-        state_done_time_i =  10                                      ;
+        state_done_time_i =  10                                     ;
         ack_bit_i = 1                                               ;
-        sda_i = 0                                                   ;
 
         #100
         reset_bit_i = 1                                             ;
@@ -61,16 +67,35 @@ module i2c_tb(
         enable_bit_i = 0                                            ;
         
         #200
-        sda_i = 0                                                   ;
-        rev_fifo_full_i = 1                                         ;
+        rev_fifo_full_i = 0                                         ;
         #50
-        #240
-        trans_fifo_empty_i = 1                                      ;
+        #60
+        //slave write ack address
+        tb_sda_o_enable = 1                                         ;     
+        tb_sda_o = 0                                                ;
+        
+        #42
+        tb_sda_o_enable = 0                                         ;     
+        tb_sda_o = 0                                                ;
+        #118
+        trans_fifo_empty_i = 0                                      ;
         addr_rw_i = 8'b10101011                                     ;
         //repeat start
-        #400
-        repeat_start_bit_i = 0                                      ;
+        #200
+        tb_sda_o_enable = 1                                         ;     
+        tb_sda_o = 0                                                ;
+        #42
+        tb_sda_o_enable = 0                                         ;     
+        tb_sda_o = 0                                                ;
+        #160
         rev_fifo_full_i = 1                                         ;
+        #160
+        tb_sda_o_enable = 1                                         ;     
+        tb_sda_o = 1                                                ;
+        #42
+        repeat_start_bit_i = 0                                      ;
+        tb_sda_o_enable = 0                                         ;     
+        tb_sda_o = 0                                                ;
     end
 
     always #1 i2c_core_clock_i = ~i2c_core_clock_i                  ;
