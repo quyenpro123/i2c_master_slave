@@ -55,8 +55,6 @@ module i2c_register_block(
                 rx_fifo_read_enable_o <= 0                                              ;
             end
         else
-            status <= status_i                                                          ;
-            receive <= receive_i                                                        ;
             begin
                 if (psel_i == 1 && penable_i == 0)
                     begin
@@ -110,11 +108,11 @@ module i2c_register_block(
                     end
                 else if (psel_i == 0 && penable_i == 0)
                     begin   
-                        tx_fifo_write_enable_o <= 0                                     ;
+                        tx_fifo_write_enable_o <= 0                                         ;
                         if (counter_read > 1)
-                            counter_read <= counter_read + 1                            ;
+                            counter_read <= counter_read + 1                                ;
                         else 
-                            prdata_o <= 0                                               ;
+                            prdata_o <= 0                                                   ;
                     end
             end
     end

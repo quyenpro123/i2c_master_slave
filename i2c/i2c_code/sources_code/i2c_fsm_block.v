@@ -12,6 +12,7 @@ module i2c_fsm_block(
     input [7:0] counter_detect_edge_i                                                       , //counter detect edge from clock generator
     input [7:0] counter_data_ack_i                                                          , //counter data, ack from datapath
     input [7:0] prescaler_i                                                                 , //value of prescaler register
+    input       read_almost_empty_i                                                         ,
     //---------------------------------------------------------             //----------------------output---------------
     							    
     output reg start_cnt_o                                                                  ,	// start signal to datapath and clock generator						    
@@ -93,7 +94,7 @@ module i2c_fsm_block(
             read_fifo_en_o <= 0                                                                                                     ;
         else
             begin
-                if (next_state == write_data && (current_state == read_addr_ack || current_state == read_data_ack))                   //prepare data from trans fifo to send to slave
+                if (next_state == write_data && (current_state == read_addr_ack || current_state == read_data_ack) && read_almost_empty_i == 0)                   //prepare data from trans fifo to send to slave
                     read_fifo_en_o <= 1                                                                                             ;
                 else
                     read_fifo_en_o <= 0                                                                                             ;
@@ -107,7 +108,7 @@ module i2c_fsm_block(
             write_fifo_en_o <= 0                                                                                                     ;
         else
             begin
-                if (next_state == write_data_ack && current_state == read_data)                                                      //prepare data from trans fifo to send to slave
+                if (next_state == write_data_ack && current_state == read_data )                                                      //prepare data from trans fifo to send to slave
                     write_fifo_en_o <= 1                                                                                             ;
                 else
                     write_fifo_en_o <= 0                                                                                             ;
@@ -263,7 +264,7 @@ module i2c_fsm_block(
                 if (counter_detect_edge_i <= (2 * prescaler_i - 3))
                     sda_en_o = 1                                            ;
                 else
-                    sda_en_o = 0                                            ;    
+                    sda_en_o = sda_en_o                                     ;    
                 scl_en_o = 0                                                ;	
                 start_cnt_o = 1                                             ; //fsm inform to data_path and clock_gen generate start condition                                                						    
                 write_addr_cnt_o = 0                                        ;                                            							

@@ -89,6 +89,7 @@ module i2c_master_top(
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
         .prescaler_i(prescaler)                                                         ,
+        .read_almost_empty_i(tx_fifo_read_almost_empty)                                 ,
         
         //output
         .start_cnt_o(start_cnt)                                                         ,
