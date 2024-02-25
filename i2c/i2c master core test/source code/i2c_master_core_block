@@ -1,4 +1,4 @@
-module i2c_master_top(
+module i2c_master_core_block(
     //fsm input and clock gen input
     input               i2c_core_clock_i                                                ,
     input               reset_bit_i                                                     ,
@@ -6,9 +6,9 @@ module i2c_master_top(
     input               repeat_start_bit_i                                              ,
     input               trans_fifo_empty_i                                              ,
     input               rev_fifo_full_i                                                 ,
-    input               state_done_time_i                                               ,
+    input       [7:0]   state_done_time_i                                               ,
     input       [7:0]   prescaler_i                                                     ,
-    input               read_almost_empty_i                                             ;
+    input               read_almost_empty_i                                             ,
     input               sda_i                                                           ,
     input               ack_bit_i                                                       ,
     //data path input
@@ -60,13 +60,13 @@ module i2c_master_top(
         .reset_bit_i(reset_bit_i)                                                       ,
         .rw_bit_i(addr_rw_i[0])                                                         ,
         .sda_i(sda_i)                                                                   ,
-        .repeat_start_bit_i(repeat_start_bit_i)                                                     ,
-        .trans_fifo_empty_i(tx_ftrans_fifo_empty_iifo_read_empty)                                         ,
+        .repeat_start_bit_i(repeat_start_bit_i)                                         ,
+        .trans_fifo_empty_i(trans_fifo_empty_i)                                         ,
         .rev_fifo_full_i(rev_fifo_full_i)                                               ,    
         .state_done_time_i(state_done_time_i)                                           ,
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
-        .prescaler_i(prescaler)                                                         ,
+        .prescaler_i(prescaler_i)                                                       ,
         .read_almost_empty_i(read_almost_empty_i)                                       ,
         
         //output
@@ -103,11 +103,11 @@ module i2c_master_top(
         .repeat_start_cnt_i(repeat_start_cnt)                                           ,
         .counter_state_done_time_repeat_start_i(counter_state_done_time_repeat_start)   ,
         .counter_detect_edge_i(counter_detect_edge)                                     ,
-        .prescaler_i(prescaler)                                                         ,                                      
+        .prescaler_i(prescaler_i)                                                       ,                                      
 
         //output
         .sda_o(data_path_sda_o)                                                         ,
-        .data_o(rx_fifo_data_i)                                                         ,
+        .data_o(data_read_from_i2c_slave)                                               ,
         .counter_data_ack_o(counter_data_ack)                                       
     );
 
@@ -115,7 +115,7 @@ module i2c_master_top(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
         .reset_bit_i(reset_bit_i)                                                       ,
-        .prescaler_i(prescaler)                                                         ,
+        .prescaler_i(prescaler_i)                                                       ,
         
         //output
         .scl_o(clock_gen_scl_o)                                                         ,

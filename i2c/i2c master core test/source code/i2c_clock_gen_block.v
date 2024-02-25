@@ -13,7 +13,7 @@ module i2c_clock_gen_block(
     always @(posedge i2c_core_clock_i, negedge reset_bit_i) 
     begin
         if (~reset_bit_i)
-            counter_detect_edge_o <= (2 * prescaler_i - 1)                                  ;
+            counter_detect_edge_o <= (2 * prescaler_i - 1)                                 ;
         else
             if (counter_detect_edge_o == 0)   
                 counter_detect_edge_o <= (2 * prescaler_i - 1)                              ;

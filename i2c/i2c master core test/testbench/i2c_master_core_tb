@@ -7,7 +7,7 @@ module i2c_master_core_tb();
     reg repeat_start_bit_i                                                              ;
     reg trans_fifo_empty_i                                                              ;
     reg rev_fifo_full_i                                                                 ;
-    reg state_done_time_i                                                               ;
+    reg [7:0]state_done_time_i                                                          ;
     reg [7:0]prescaler_i                                                                ;
     reg read_almost_empty_i                                                             ;
     reg sda_i                                                                           ;
@@ -39,19 +39,36 @@ module i2c_master_core_tb();
     
     initial 
     begin
-            i2c_core_clock_i = 1                                                        ;
+            i2c_core_clock_i = 0                                                        ;
             reset_bit_i = 0                                                             ;
             enable_bit_i = 0                                                            ;
             repeat_start_bit_i = 0                                                      ;
             trans_fifo_empty_i = 0                                                      ;
-            rev_fifo_full_i = 0                                                         ;
+            rev_fifo_full_i = 1                                                         ;
             state_done_time_i = 4                                                       ;
             prescaler_i = 4                                                             ;
             read_almost_empty_i = 0                                                     ;
             sda_i = 0                                                                   ;
-            ack_bit_i = 0                                                               ;
+            ack_bit_i = 1                                                               ;
             data_i = 0                                                                  ;
             addr_rw_i = 0                                                               ;
+
+            #20 
+            reset_bit_i = 1                                                             ;
+            #17
+            enable_bit_i = 1                                                            ; //30
+            data_i = 8'b10101011                                                        ;
+            addr_rw_i = 8'b10101011                                                     ;
+            #283
+            addr_rw_i = 8'b10101011                                                     ;
+            repeat_start_bit_i = 0                                                      ;
+            trans_fifo_empty_i = 1                                                      ;
+            
+            #100
+            enable_bit_i = 0                                                            ;
+            repeat_start_bit_i = 0                                                      ;
+            rev_fifo_full_i = 1                                                         ;
+            
     end
 
     always #1 i2c_core_clock_i = ~i2c_core_clock_i                                      ;
