@@ -41,7 +41,7 @@ module i2c_register_block(
         if (~preset_n_i)
             begin
                 //reset internal register
-                prescaler <= 0                                                          ; 
+                prescaler <= 0                                                          ;
                 cmd <= 0                                                                ;
                 transmit <= 0                                                           ;
                 receive <= 0                                                            ;
@@ -63,7 +63,7 @@ module i2c_register_block(
                         begin
                             if (paddr_i == 8'h03)
                                 rx_fifo_read_enable_o <= 1                              ;
-                            counter_read <= counter_read + 1                            ; 
+                            counter_read <= counter_read + 1                            ;
                         end
                     end
                 else if (psel_i == 1 && penable_i == 1)
@@ -108,11 +108,11 @@ module i2c_register_block(
                     end
                 else if (psel_i == 0 && penable_i == 0)
                     begin   
-                        tx_fifo_write_enable_o <= 0                                         ;
+                        tx_fifo_write_enable_o <= 0                                     ;
                         if (counter_read > 1)
-                            counter_read <= counter_read + 1                                ;
+                            counter_read <= counter_read + 1                            ;
                         else 
-                            prdata_o <= 0                                                   ;
+                            prdata_o <= 0                                               ;
                     end
             end
     end

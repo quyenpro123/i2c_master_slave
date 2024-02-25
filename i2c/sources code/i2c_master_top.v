@@ -11,7 +11,7 @@ module i2c_master_top(
     input               sda_i                                                           ,
 
     //--------------------signal no source------------------------------------------
-    input       [7:0]   state_done_time_i                                               ,    
+    input       [7:0]   state_done_time_i                                               ,
     input               ack_bit_i                                                       ,
     //-------------------------------------------------------------------------------
     output      [7:0]   prdata_o                                                        ,
@@ -20,60 +20,59 @@ module i2c_master_top(
     inout               scl_o
 );
     //fsm block internal signal
-    wire                start_cnt                                                      ;
-    wire                write_addr_cnt                                                 ;
-    wire                write_data_cnt                                                 ;
-    wire                read_data_cnt                                                  ;
-    wire                write_ack_cnt                                                  ;
-    wire                read_ack_cnt                                                   ;
-    wire                stop_cnt                                                       ;
-    wire                repeat_start_cnt                                               ;
-    wire                write_fifo_en                                                  ;
-    wire                read_fifo_en                                                   ;
-    wire                scl_en                                                         ;
-    wire                sda_en                                                         ;
-    wire        [7:0]   counter_state_done_time_repeat_start                           ;
+    wire                start_cnt                                                       ;
+    wire                write_addr_cnt                                                  ;
+    wire                write_data_cnt                                                  ;
+    wire                read_data_cnt                                                   ;
+    wire                write_ack_cnt                                                   ;
+    wire                read_ack_cnt                                                    ;
+    wire                stop_cnt                                                        ;
+    wire                repeat_start_cnt                                                ;
+    wire                write_fifo_en                                                   ;
+    wire                read_fifo_en                                                    ;
+    wire                scl_en                                                          ;
+    wire                sda_en                                                          ;
+    wire        [7:0]   counter_state_done_time_repeat_start                            ;
 
     
     //clock gen block internal signal
-    wire        [7:0]   counter_detect_edge                                            ;
-    wire                clock_gen_scl_o                                                ;
+    wire        [7:0]   counter_detect_edge                                             ;
+    wire                clock_gen_scl_o                                                 ;
 
     //datapath block internal signal
-    wire                data_path_sda_o                                                ;
-    wire        [7:0]   data_read_from_i2c_slave                                       ;
-    wire        [7:0]   counter_data_ack                                               ;
+    wire                data_path_sda_o                                                 ;
+    wire        [7:0]   data_read_from_i2c_slave                                        ;
+    wire        [7:0]   counter_data_ack                                                ;
     //TX fifo top block internal signal
-    wire        [7:0]   tx_fifo_data_i                                                 ;
-    wire        [7:0]   tx_fifo_data_o                                                 ;
-    wire                tx_fifo_read_empty                                             ;
-    wire                tx_fifo_read_almost_empty                                      ;
-    wire                tx_fifo_write_full                                             ;
-    wire                tx_fifo_write_almost_full                                      ;
+    wire        [7:0]   tx_fifo_data_i                                                  ;
+    wire        [7:0]   tx_fifo_data_o                                                  ;
+    wire                tx_fifo_read_empty                                              ;
+    wire                tx_fifo_read_almost_empty                                       ;
+    wire                tx_fifo_write_full                                              ;
+    wire                tx_fifo_write_almost_full                                       ;
 
     //RX fifo top block internal signal                             
-    wire        [7:0]   rx_fifo_data_i                                                 ;
-    wire        [7:0]   rx_fifo_data_o                                                 ;
-    wire                rx_fifo_read_empty                                             ;
-    wire                rx_fifo_read_almost_empty                                      ;
-    wire                rx_fifo_write_full                                             ;
-    wire                rx_fifo_write_almost_full                                      ;
+    wire        [7:0]   rx_fifo_data_i                                                  ;
+    wire        [7:0]   rx_fifo_data_o                                                  ;
+    wire                rx_fifo_read_empty                                              ;
+    wire                rx_fifo_read_almost_empty                                       ;
+    wire                rx_fifo_write_full                                              ;
+    wire                rx_fifo_write_almost_full                                       ;
     //register block
-    wire        [7:0]   prescaler                                                      ; //0x00
-    wire        [7:0]   cmd                                                            ; //0x01
-    wire        [7:0]   transmit                                                       ; //0x02
-    wire        [7:0]   address_rw                                                     ; //0x04
-    wire        [7:0]   status                                                         ;
-    wire                tx_fifo_write_enable                                           ;
-    wire                rx_fifo_read_enable                                            ;
+    wire        [7:0]   prescaler                                                       ; //0x00
+    wire        [7:0]   cmd                                                             ; //0x01
+    wire        [7:0]   transmit                                                        ; //0x02
+    wire        [7:0]   address_rw                                                      ; //0x04
+    wire        [7:0]   status                                                          ;
+    wire                tx_fifo_write_enable                                            ;
+    wire                rx_fifo_read_enable                                             ;
 
     //tristate   
-    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
-    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                   ;
-    //pullup(sda_o)                                                                    ;
+    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
+    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
     
     //update status register
-    assign status = {2'b00, tx_fifo_read_empty, rx_fifo_write_full, 3'b000}            ;
+    assign status = {2'b00, tx_fifo_read_empty, rx_fifo_write_full, 3'b000}             ;
 
     i2c_fsm_block fsm(
         //input
@@ -84,7 +83,7 @@ module i2c_master_top(
         .sda_i(sda_i)                                                                   ,
         .repeat_start_bit_i(cmd[7])                                                     ,
         .trans_fifo_empty_i(tx_fifo_read_empty)                                         ,
-        .rev_fifo_full_i(rx_fifo_write_full)                                            ,   
+        .rev_fifo_full_i(rx_fifo_write_full)                                            ,
         .state_done_time_i(state_done_time_i)                                           ,
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
@@ -125,7 +124,7 @@ module i2c_master_top(
         .repeat_start_cnt_i(repeat_start_cnt)                                           ,
         .counter_state_done_time_repeat_start_i(counter_state_done_time_repeat_start)   ,
         .counter_detect_edge_i(counter_detect_edge)                                     ,
-        .prescaler_i(prescaler)                                                         ,                                      
+        .prescaler_i(prescaler)                                                         ,
 
         //output
         .sda_o(data_path_sda_o)                                                         ,

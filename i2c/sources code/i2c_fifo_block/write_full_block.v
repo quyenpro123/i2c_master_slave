@@ -3,15 +3,15 @@ module write_full_block
     parameter                       addr_size = 3                               
 )
 (
-    input                           write_clock_i                                                       , //clock in write domain
-    input                           write_reset_n_i                                                     , //reset active low signal from write domain
-    input                           write_inc_i                                                         , //variable increases write address value
-    input       [addr_size:0]       read_to_write_pointer_i                                             , //read address to write domain to check fifo full
+    input                           write_clock_i                                                                       , //clock in write domain
+    input                           write_reset_n_i                                                                     , //reset active low signal from write domain
+    input                           write_inc_i                                                                         , //variable increases write address value
+    input       [addr_size:0]       read_to_write_pointer_i                                                             , //read address to write domain to check fifo full
     
-    output reg  [addr_size - 1:0]   write_addr_o                                                        , //write address
-    output reg  [addr_size:0]       write_pointer_o                                                     , //write address pointer
-    output reg                      write_full_o                                                        , //signal that fifo is full
-    output reg                      write_almost_full_o                                                   //signal that fifo is almost full        
+    output reg  [addr_size - 1:0]   write_addr_o                                                                        , //write address
+    output reg  [addr_size:0]       write_pointer_o                                                                     , //write address pointer
+    output reg                      write_full_o                                                                        , //signal that fifo is full
+    output reg                      write_almost_full_o                                                                   //signal that fifo is almost full        
 );
     reg         [addr_size:0]       write_binary                                                                        ;
     reg         [addr_size:0]       write_binary_next                                                                   ;

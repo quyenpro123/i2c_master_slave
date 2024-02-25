@@ -14,10 +14,10 @@ module write_to_read_syn_block
     always @(posedge read_clock_i, negedge read_reset_n_i) 
     begin
         if (~read_reset_n_i)
-            {write_to_read_pointer_o, tem_write_to_read_pointer} <= 0       ;
+            {write_to_read_pointer_o, tem_write_to_read_pointer} <= 0           ;
         else
             {write_to_read_pointer_o, tem_write_to_read_pointer} <=
-                {tem_write_to_read_pointer, write_pointer_i}                ;
+                {tem_write_to_read_pointer, write_pointer_i}                    ;
     end
 
 endmodule

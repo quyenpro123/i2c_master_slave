@@ -1,0 +1,126 @@
+module i2c_master_top(
+    //fsm input and clock gen input
+    input               i2c_core_clock_i                                                ,
+    input               reset_bit_i                                                     ,
+    input               enable_bit_i                                                    ,
+    input               repeat_start_bit_i                                              ,
+    input               trans_fifo_empty_i                                              ,
+    input               rev_fifo_full_i                                                 ,
+    input               state_done_time_i                                               ,
+    input       [7:0]   prescaler_i                                                     ,
+    input               read_almost_empty_i                                             ;
+    input               sda_i                                                           ,
+    input               ack_bit_i                                                       ,
+    //data path input
+    input       [7:0]   data_i                                                          ,
+    input       [7:0]   addr_rw_i                                                       ,
+
+    //-------------------------------------------------------------------------------
+
+    inout               sda_o                                                           ,
+    inout               scl_o
+);
+    //fsm block internal signal
+    wire                start_cnt                                                      ;
+    wire                write_addr_cnt                                                 ;
+    wire                write_data_cnt                                                 ;
+    wire                read_data_cnt                                                  ;
+    wire                write_ack_cnt                                                  ;
+    wire                read_ack_cnt                                                   ;
+    wire                stop_cnt                                                       ;
+    wire                repeat_start_cnt                                               ;
+    wire                write_fifo_en                                                  ;
+    wire                read_fifo_en                                                   ;
+    wire                scl_en                                                         ;
+    wire                sda_en                                                         ;
+    wire        [7:0]   counter_state_done_time_repeat_start                           ;
+
+    
+    //clock gen block internal signal
+    wire        [7:0]   counter_detect_edge                                            ;
+    wire                clock_gen_scl_o                                                ;
+
+    //datapath block internal signal
+    wire                data_path_sda_o                                                ;
+    wire        [7:0]   data_read_from_i2c_slave                                       ;
+    wire        [7:0]   counter_data_ack                                               ;
+   
+
+    //tristate   
+    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
+    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                   ;
+    //pullup(sda_o)                                                                    ;
+    
+    //update status register
+
+    i2c_fsm_block fsm(
+        //input
+        .i2c_core_clock_i(i2c_core_clock_i)                                             ,
+        .enable_bit_i(enable_bit_i)                                                     ,
+        .reset_bit_i(reset_bit_i)                                                       ,
+        .rw_bit_i(addr_rw_i[0])                                                         ,
+        .sda_i(sda_i)                                                                   ,
+        .repeat_start_bit_i(repeat_start_bit_i)                                                     ,
+        .trans_fifo_empty_i(tx_ftrans_fifo_empty_iifo_read_empty)                                         ,
+        .rev_fifo_full_i(rev_fifo_full_i)                                               ,    
+        .state_done_time_i(state_done_time_i)                                           ,
+        .counter_detect_edge_i(counter_detect_edge)                                     ,
+        .counter_data_ack_i(counter_data_ack)                                           ,
+        .prescaler_i(prescaler)                                                         ,
+        .read_almost_empty_i(read_almost_empty_i)                                       ,
+        
+        //output
+        .start_cnt_o(start_cnt)                                                         ,
+        .write_addr_cnt_o(write_addr_cnt)                                               ,
+        .write_data_cnt_o(write_data_cnt)                                               ,
+        .read_data_cnt_o(read_data_cnt)                                                 ,
+        .write_ack_cnt_o(write_ack_cnt)                                                 ,
+        .read_ack_cnt_o(read_ack_cnt)                                                   ,
+        .stop_cnt_o(stop_cnt)                                                           ,
+        .repeat_start_cnt_o(repeat_start_cnt)                                           ,
+        .write_fifo_en_o(write_fifo_en)                                                 ,
+        .read_fifo_en_o(read_fifo_en)                                                   ,
+        .scl_en_o(scl_en)                                                               ,
+        .sda_en_o(sda_en)                                                               ,
+        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)
+    );
+
+    i2c_data_path_block data_path(
+        //input
+        .i2c_core_clock_i(i2c_core_clock_i)                                             ,
+        .reset_bit_i(reset_bit_i)                                                       ,
+        .sda_i(sda_i)                                                                   ,
+        .data_i(data_i)                                                                 ,
+        .addr_rw_i(addr_rw_i)                                                           ,
+        .ack_bit_i(ack_bit_i)                                                           ,
+        .start_cnt_i(start_cnt)                                                         ,
+        .write_addr_cnt_i(write_addr_cnt)                                               ,
+        .write_data_cnt_i(write_data_cnt)                                               ,
+        .read_data_cnt_i(read_data_cnt)                                                 ,
+        .write_ack_cnt_i(write_ack_cnt)                                                 ,
+        .read_ack_cnt_i(read_ack_cnt)                                                   ,
+        .stop_cnt_i(stop_cnt)                                                           ,
+        .repeat_start_cnt_i(repeat_start_cnt)                                           ,
+        .counter_state_done_time_repeat_start_i(counter_state_done_time_repeat_start)   ,
+        .counter_detect_edge_i(counter_detect_edge)                                     ,
+        .prescaler_i(prescaler)                                                         ,                                      
+
+        //output
+        .sda_o(data_path_sda_o)                                                         ,
+        .data_o(rx_fifo_data_i)                                                         ,
+        .counter_data_ack_o(counter_data_ack)                                       
+    );
+
+    i2c_clock_gen_block clock_gen(
+        //input
+        .i2c_core_clock_i(i2c_core_clock_i)                                             ,
+        .reset_bit_i(reset_bit_i)                                                       ,
+        .prescaler_i(prescaler)                                                         ,
+        
+        //output
+        .scl_o(clock_gen_scl_o)                                                         ,
+        .counter_detect_edge_o(counter_detect_edge)                                 
+    );
+
+
+endmodule

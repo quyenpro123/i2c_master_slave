@@ -38,7 +38,7 @@ module register_block_tb();
         .address_rw_o(address_rw_o)                                         ,
         .tx_fifo_write_enable_o(tx_fifo_write_enable_o)                     ,
         .rx_fifo_read_enable_o(rx_fifo_read_enable_o)                       ,
-        .transmit_o(transmit_o)                                             
+        .transmit_o(transmit_o)
     );
     
     initial 
@@ -52,7 +52,7 @@ module register_block_tb();
            pwrite_i = 0                                                     ;
            receive_i = 0                                                    ;
            status_i = 0                                                     ;
-           //---------------test write data-------------------------------
+           //---------------test write data----------------------------------
            #10
            preset_n_i = 1                                                   ;
            #10
@@ -78,7 +78,7 @@ module register_block_tb();
            #10
            penable_i = 0                                                    ;
            psel_i = 0                                                       ;
-           //-----------------test read data----------------------------------
+           //-----------------test read data---------------------------------
            #30
            psel_i = 1                                                       ;
            penable_i = 0                                                    ;

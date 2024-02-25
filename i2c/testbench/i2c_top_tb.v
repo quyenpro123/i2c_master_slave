@@ -34,7 +34,7 @@ module i2c_top_tb();
         .prdata_o(prdata_o)                                                     ,
         .pready_o(pready_o)                                                     ,
         .sda_o(sda_o)                                                           ,
-        .scl_o(scl_o)                                                               
+        .scl_o(scl_o)
     );
 
     assign sda_o = sda_en_tb ? sda_tb : 1'bz                                    ;
@@ -61,7 +61,7 @@ module i2c_top_tb();
         
         #20
         
-        //cpu write to prescaler register                                   
+        //cpu write to prescaler register
         #2
         psel_i = 1                                                              ; //#32
         penable_i = 0                                                           ;
@@ -139,8 +139,6 @@ module i2c_top_tb();
         #90
         sda_en_tb = 0                                                           ; //900
         sda_tb = 0                                                              ;
-        
-        
     end
 
     always #1 pclk_i = ~pclk_i                                                  ;
