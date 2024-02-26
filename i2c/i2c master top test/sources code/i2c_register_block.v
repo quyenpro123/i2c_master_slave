@@ -28,7 +28,7 @@ module i2c_register_block(
     reg [7:0] receive                                                                   ; //0x03
     reg [7:0] address_rw                                                                ; //0x04
     reg [7:0] status                                                                    ; //0x05
-    reg [2:0] counter_read                                                              ; 
+    reg [1:0] counter_read                                                              ; 
     
 
     assign prescaler_o = prescaler                                                      ; //update output of register internal
@@ -38,6 +38,8 @@ module i2c_register_block(
 
     always @(posedge pclk_i) 
     begin
+        receive <= receive_i                                                            ;
+        status <= status_i                                                              ;
         if (~preset_n_i)
             begin
                 //reset internal register
@@ -58,12 +60,11 @@ module i2c_register_block(
             begin
                 if (psel_i == 1 && penable_i == 0)
                     begin
-                        counter_read <= 0                                               ;
                         if (pwrite_i == 0)
                         begin
                             if (paddr_i == 8'h03)
                                 rx_fifo_read_enable_o <= 1                              ;
-                            counter_read <= counter_read + 1                            ;
+                            counter_read <= 1                                           ;
                         end
                     end
                 else if (psel_i == 1 && penable_i == 1)
@@ -111,7 +112,7 @@ module i2c_register_block(
                         tx_fifo_write_enable_o <= 0                                     ;
                         if (counter_read > 1)
                             counter_read <= counter_read + 1                            ;
-                        else 
+                        else
                             prdata_o <= 0                                               ;
                     end
             end

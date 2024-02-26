@@ -8,16 +8,14 @@ module i2c_master_top(
     input       [7:0]   paddr_i                                                         ,
     input       [7:0]   pwdata_i                                                        ,
     input               pwrite_i                                                        ,
-    input               sda_i                                                           ,
 
     //--------------------signal no source------------------------------------------
     input       [7:0]   state_done_time_i                                               ,
-    input               ack_bit_i                                                       ,
     //-------------------------------------------------------------------------------
     output      [7:0]   prdata_o                                                        ,
     output              pready_o                                                        ,
-    inout               sda_o                                                           ,
-    inout               scl_o
+    inout               sda_io                                                          ,
+    inout               scl_io
 );
     //fsm block internal signal
     wire                start_cnt                                                       ;
@@ -33,6 +31,7 @@ module i2c_master_top(
     wire                scl_en                                                          ;
     wire                sda_en                                                          ;
     wire        [7:0]   counter_state_done_time_repeat_start                            ;
+    wire                ack_bit                                                         ;
 
     
     //clock gen block internal signal
@@ -68,19 +67,16 @@ module i2c_master_top(
     wire                rx_fifo_read_enable                                             ;
 
     //tristate   
-    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
-    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
+    assign sda_io = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
+    assign scl_io = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
     
-    //update status register
-    assign status = {2'b00, tx_fifo_read_empty, rx_fifo_write_full, 3'b000}             ;
-
     i2c_fsm_block fsm(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
         .enable_bit_i(cmd[6])                                                           ,
         .reset_bit_i(cmd[5])                                                            ,
         .rw_bit_i(address_rw[0])                                                        ,
-        .sda_i(sda_i)                                                                   ,
+        .sda_i(sda_io)                                                                   ,
         .repeat_start_bit_i(cmd[7])                                                     ,
         .trans_fifo_empty_i(tx_fifo_read_empty)                                         ,
         .rev_fifo_full_i(rx_fifo_write_full)                                            ,
@@ -103,17 +99,18 @@ module i2c_master_top(
         .read_fifo_en_o(read_fifo_en)                                                   ,
         .scl_en_o(scl_en)                                                               ,
         .sda_en_o(sda_en)                                                               ,
-        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)
+        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)   ,
+        .ack_bit_o(ack_bit)
     );
 
     i2c_data_path_block data_path(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
         .reset_bit_i(cmd[5])                                                            ,
-        .sda_i(sda_i)                                                                   ,
+        .sda_i(sda_io)                                                                  ,
         .data_i(tx_fifo_data_o)                                                         ,
         .addr_rw_i(address_rw)                                                          ,
-        .ack_bit_i(ack_bit_i)                                                           ,
+        .ack_bit_i(ack_bit)                                                             ,
         .start_cnt_i(start_cnt)                                                         ,
         .write_addr_cnt_i(write_addr_cnt)                                               ,
         .write_data_cnt_i(write_data_cnt)                                               ,
@@ -143,7 +140,7 @@ module i2c_master_top(
         .counter_detect_edge_o(counter_detect_edge)                                 
     );
 
-    fifo_block_top tx_fifo(
+    fifo_top_block tx_fifo(
         //input
         .read_clock_i(i2c_core_clock_i)                                                 ,
         .read_reset_n_i(cmd[5])                                                         ,
@@ -161,7 +158,7 @@ module i2c_master_top(
         .write_almost_full_o(tx_fifo_write_almost_full)                             
     );
 
-    fifo_block_top rx_fifo(
+    fifo_top_block rx_fifo(
         //input
         .read_clock_i(pclk_i)                                                           ,
         .read_reset_n_i(preset_n_i)                                                     ,
@@ -188,7 +185,7 @@ module i2c_master_top(
         .pwdata_i(pwdata_i)                                                             ,
         .pwrite_i(pwrite_i)                                                             ,
         .receive_i(rx_fifo_data_o)                                                      ,
-        .status_i(status)                                                               ,
+        .status_i({2'b00, tx_fifo_read_empty, rx_fifo_write_full, 4'b0000})             ,
 
         //output
         .prdata_o(prdata_o)                                                             ,

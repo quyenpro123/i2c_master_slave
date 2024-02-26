@@ -9,16 +9,24 @@ module i2c_top_tb();
     reg                 pwrite_i                                                ;
     reg     [7:0]       state_done_time_i                                       ;
     reg                 ack_bit_i                                               ;
-    wire                sda_i                                                   ;
 
     wire    [7:0]       prdata_o                                                ;
     wire                pready_o                                                ;
-    wire                sda_o                                                   ;
-    wire                scl_o                                                   ;
-
-    reg sda_tb                                                                  ;
+    wire                sda_io                                                  ;
+    wire                scl_io                                                  ;
+    
+    //variable of slave
+    localparam slave_addr_tb = 7'b1010101                                       ;
+    reg [7:0] read_byte_tb = 8'b0                                               ;
+    reg [7:0] read_addr_tb = 8'b0                                               ;
+    reg [7:0] read_data_tb = 8'b0                                               ;
+    reg [7:0] counter_data_tb = 9                                               ;
+    reg [7:0] counter_addr_tb = 9                                               ;
+                                                       
+    reg sda_o_tb                                                                ;
+    wire sda_i_tb                                                               ;
     reg sda_en_tb                                                               ;
-
+    
     i2c_master_top master(
         .i2c_core_clock_i(i2c_core_clock_i)                                     ,
         .pclk_i(pclk_i)                                                         ,
@@ -29,17 +37,15 @@ module i2c_top_tb();
         .pwdata_i(pwdata_i)                                                     ,
         .pwrite_i(pwrite_i)                                                     ,
         .state_done_time_i(state_done_time_i)                                   ,
-        .ack_bit_i(ack_bit_i)                                                   ,
-        .sda_i(sda_i)                                                           ,
         .prdata_o(prdata_o)                                                     ,
         .pready_o(pready_o)                                                     ,
-        .sda_o(sda_o)                                                           ,
-        .scl_o(scl_o)
+        .sda_io(sda_io)                                                          ,
+        .scl_io(scl_io)
     );
 
-    assign sda_o = sda_en_tb ? sda_tb : 1'bz                                    ;
-    pullup(sda_o)                                                               ;
-    assign sda_i = sda_o                                                        ;
+    assign sda_io = sda_en_tb ? sda_o_tb : 1'bz                                 ;
+    pullup(sda_io)                                                              ;
+    assign sda_i_tb = sda_io                                                    ;
 
     initial 
     begin
@@ -54,7 +60,7 @@ module i2c_top_tb();
         state_done_time_i = 4                                                   ;
         ack_bit_i = 0                                                           ;
         sda_en_tb = 0                                                           ;
-        sda_tb = 0                                                              ;
+        sda_o_tb = 0                                                            ;
         #10
         
         preset_n_i = 1                                                          ;
@@ -98,7 +104,7 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
         pwrite_i = 1                                                            ;
         paddr_i = 8'h04                                                         ;
-        pwdata_i = 8'b10101010                                                  ; //prescaler value
+        pwdata_i = 8'b10101010                                                  ; //address value
         #2
         psel_i = 1                                                              ;
         penable_i = 1                                                           ;
@@ -111,7 +117,7 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
         pwrite_i = 1                                                            ;
         paddr_i = 8'h02                                                         ;
-        pwdata_i = 8'b10101010                                                  ; //prescaler value
+        pwdata_i = 8'b10101010                                                  ; //data value
         #2
         psel_i = 1                                                              ;
         penable_i = 1                                                           ;
@@ -119,28 +125,112 @@ module i2c_top_tb();
         psel_i = 0                                                              ;
         penable_i = 0                                                           ;
         
-        //cpu enable i2c core
+        //cpu enable i2c core and write repeat start bit
         #2                                                                      
         psel_i = 1                                                              ; //62
         penable_i = 0                                                           ;
         pwrite_i = 1                                                            ;
         paddr_i = 8'h01                                                         ;
-        pwdata_i = 8'b01100000                                                  ; //prescaler value
+        pwdata_i = 8'b11100000                                                  ; //cmd register
         #2
         psel_i = 1                                                              ;
         penable_i = 1                                                           ;
         #2
         psel_i = 0                                                              ;//68
         penable_i = 0                                                           ;
+                        
         
         #742                                                                      //810
         sda_en_tb = 1                                                           ;
-        sda_tb = 0                                                              ;
+        sda_o_tb = 0                                                            ;
         #90
         sda_en_tb = 0                                                           ; //900
-        sda_tb = 0                                                              ;
+        sda_o_tb = 0                                                            ;
+        //cpu want read data from slave
+        psel_i = 1                                                              ; //50
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h04                                                         ;
+        pwdata_i = 8'b10101011                                                  ; //address value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;//904
+        
+        #706
+        sda_en_tb = 0                                                           ; //1610
+        sda_o_tb = 0                                                            ;
+        
+        #800
+        sda_en_tb = 1                                                           ; //2410
+        sda_o_tb = 0                                                            ;
+        #90
+        sda_en_tb = 0                                                           ; //2500
+        sda_o_tb = 0                                                            ;
+        //disable repeat start bit and enable bit
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b00100000                                                  ; //cmd register
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;//2504
+        penable_i = 0                                                           ;
     end
-
+    
+    //detect start, repeat start
+    always @(negedge sda_io)
+    begin   
+        if (scl_io == 1)
+        begin
+            counter_addr_tb <= 9                                                ;
+        end
+                   
+    end    
+    
+    
+    //read sda from slave
+    always @(posedge scl_io)
+    begin
+        if (counter_addr_tb >= 1)
+        begin
+            read_byte_tb[counter_addr_tb - 2] <= sda_i_tb                       ;
+            counter_addr_tb <= counter_addr_tb - 1                              ;
+        end
+        else if (counter_data_tb >= 1 && counter_addr_tb == 0)
+        begin
+            read_byte_tb[counter_data_tb - 2] <= sda_i_tb                       ;
+            counter_data_tb <= counter_data_tb - 1                              ;
+        end
+        
+    end
+    
+    //catch data
+    always @(negedge scl_io)
+    begin
+        if (counter_addr_tb == 1)
+        begin
+            read_addr_tb <= read_byte_tb                                        ;
+            if (read_addr_tb[7:1] == slave_addr_tb)
+            begin
+                sda_en_tb = 1                                                   ; //2410
+                sda_o_tb = 0                                                    ;
+            end
+        end
+        else if (counter_data_tb == 1)
+        begin
+            read_data_tb <= read_byte_tb                                        ;
+            sda_en_tb = 1                                                       ; //2410
+            sda_o_tb = 1                                                        ;  
+        end
+    end
+    
+    
     always #1 pclk_i = ~pclk_i                                                  ;
     always #5 i2c_core_clock_i = ~i2c_core_clock_i                              ;
 

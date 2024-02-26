@@ -34,6 +34,7 @@ module i2c_master_core_block(
     wire                scl_en                                                         ;
     wire                sda_en                                                         ;
     wire        [7:0]   counter_state_done_time_repeat_start                           ;
+    wire                ack_bit                                                        ;
 
     
     //clock gen block internal signal
@@ -82,7 +83,8 @@ module i2c_master_core_block(
         .read_fifo_en_o(read_fifo_en)                                                   ,
         .scl_en_o(scl_en)                                                               ,
         .sda_en_o(sda_en)                                                               ,
-        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)
+        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)   ,
+        .ack_bit_o(ack_bit)                                                 
     );
 
     i2c_data_path_block data_path(
@@ -92,7 +94,7 @@ module i2c_master_core_block(
         .sda_i(sda_i)                                                                   ,
         .data_i(data_i)                                                                 ,
         .addr_rw_i(addr_rw_i)                                                           ,
-        .ack_bit_i(ack_bit_i)                                                           ,
+        .ack_bit_i(ack_bit)                                                             ,
         .start_cnt_i(start_cnt)                                                         ,
         .write_addr_cnt_i(write_addr_cnt)                                               ,
         .write_data_cnt_i(write_data_cnt)                                               ,

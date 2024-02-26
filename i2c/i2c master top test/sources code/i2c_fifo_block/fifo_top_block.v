@@ -1,4 +1,4 @@
-module fifo_block_top
+module fifo_top_block
 #(
     parameter                       data_size = 8                                       , 
     parameter                       addr_size = 3                                       

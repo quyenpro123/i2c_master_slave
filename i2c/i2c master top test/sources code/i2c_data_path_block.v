@@ -33,7 +33,7 @@ module i2c_data_path_block (
                 (write_addr_cnt_i || write_ack_cnt_i ||
                 read_data_cnt_i || write_data_cnt_i || read_ack_cnt_i))
             
-            counter_data_ack_o = counter_data_ack_o - 1                                         ;
+            counter_data_ack_o <= counter_data_ack_o - 1                                         ;
     end
 
     //handle sda when datapath write
@@ -68,9 +68,7 @@ module i2c_data_path_block (
         if (~reset_bit_i)
             data_o <= 0                                                                         ;
         else
-            if (read_data_cnt_i && 
-                counter_detect_edge_i == (2 * prescaler_i - 1))
-                
+            if (read_data_cnt_i && counter_detect_edge_i == (2 * prescaler_i - 1))
                 data_o[counter_data_ack_o - 2] <= sda_i                                         ;
     end
 
