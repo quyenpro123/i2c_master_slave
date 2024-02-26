@@ -1,25 +1,25 @@
 module i2c_data_path_block (
-    input i2c_core_clock_i                                                                      ,
-    input reset_bit_i                                                                           ,
-    input sda_i                                                                                 ,
-    input [7:0] data_i                                                                          ,
-    input [7:0] addr_rw_i                                                                       ,
-    input ack_bit_i                                                                             ,
-    input start_cnt_i                                                                           ,						    
-    input write_addr_cnt_i                                                                      ,
-    input write_data_cnt_i                                                                      ,	 						
-    input read_data_cnt_i                                                                       , 
-    input write_ack_cnt_i                                                                       ,
-    input read_ack_cnt_i                                                                        ,
-    input stop_cnt_i                                                                            ,	
-    input repeat_start_cnt_i                                                                    ,
-    input [7:0] counter_state_done_time_repeat_start_i                                          , 					    
-    input [7:0] counter_detect_edge_i                                                           ,
-    input [7:0] prescaler_i                                                                     ,
+    input               i2c_core_clock_i                                                        ,
+    input               reset_bit_i                                                             ,
+    input               sda_i                                                                   ,
+    input       [7:0]   data_i                                                                  ,
+    input       [7:0]   addr_rw_i                                                               ,
+    input               ack_bit_i                                                               ,
+    input               start_cnt_i                                                             ,						    
+    input               write_addr_cnt_i                                                        ,
+    input               write_data_cnt_i                                                        ,	 						
+    input               read_data_cnt_i                                                         , 
+    input               write_ack_cnt_i                                                         ,
+    input               read_ack_cnt_i                                                          ,
+    input               stop_cnt_i                                                              ,	
+    input               repeat_start_cnt_i                                                      ,
+    input       [7:0]   counter_state_done_time_repeat_start_i                                  , 					    
+    input       [7:0]   counter_detect_edge_i                                                   ,
+    input       [7:0]   prescaler_i                                                             ,
 
-    output sda_o                                                                                ,
-    output reg [7:0] data_o                                                                     ,
-    output reg [7:0] counter_data_ack_o                                           
+    output              sda_o                                                                   ,
+    output reg  [7:0]   data_o                                                                  ,
+    output reg  [7:0]   counter_data_ack_o                                           
 );
     reg temp_sda_o                                                                              ;
     assign sda_o = temp_sda_o                                                                   ; //update sda
@@ -33,7 +33,7 @@ module i2c_data_path_block (
                 (write_addr_cnt_i || write_ack_cnt_i ||
                 read_data_cnt_i || write_data_cnt_i || read_ack_cnt_i))
             
-            counter_data_ack_o <= counter_data_ack_o - 1                                         ;
+            counter_data_ack_o <= counter_data_ack_o - 1                                        ;
     end
 
     //handle sda when datapath write
@@ -53,7 +53,7 @@ module i2c_data_path_block (
                     temp_sda_o <= ack_bit_i                                                     ;
                 else if (stop_cnt_i && counter_detect_edge_i == (prescaler_i - 2))                  
                     temp_sda_o <= 0                                                             ;
-                else if (repeat_start_cnt_i)                                                    //not handle yet
+                else if (repeat_start_cnt_i)                                                   
                     if (counter_state_done_time_repeat_start_i > 1)
                         temp_sda_o <= 1                                                         ;
                     else if (counter_state_done_time_repeat_start_i == 1)

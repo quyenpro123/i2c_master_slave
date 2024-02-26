@@ -33,23 +33,23 @@ module i2c_fsm_block(
     output              ack_bit_o                                                  
     //---------------------------------------------------------
 );
-    localparam IDLE = 0							                                                    ;
-    localparam START = 1 							                                                ;
-    localparam ADDR = 2							                                                    ;
-    localparam READ_ADDR_ACK = 3						                                            ;
-    localparam WRITE_DATA = 4						                                                ;
-    localparam READ_DATA = 5						                                                ;
-    localparam READ_DATA_ACK = 6						                                            ;
-    localparam WRITE_DATA_ACK = 7						                                            ;
-    localparam REPEAT_START = 8						                                                ;
-    localparam STOP = 9							                                                    ;
+    localparam          IDLE = 0							                                        ;
+    localparam          START = 1 							                                        ;
+    localparam          ADDR = 2							                                        ;
+    localparam          READ_ADDR_ACK = 3						                                    ;
+    localparam          WRITE_DATA = 4						                                        ;
+    localparam          READ_DATA = 5						                                        ;
+    localparam          READ_DATA_ACK = 6						                                    ;
+    localparam          WRITE_DATA_ACK = 7						                                    ;
+    localparam          REPEAT_START = 8						                                    ;
+    localparam          STOP = 9							                                        ;
 
 
-    reg [3:0] current_state       	               		                                            ;
-    reg [3:0] next_state                    					                                    ;
-    reg [7:0] counter_state_done_time_start_stop    						                        ; //for state: start, stop
-    reg       state_of_write_fifo                                                                   ;
-    reg       state_of_read_fifo                                                                    ;
+    reg         [3:0]   current_state       	               		                                ;
+    reg         [3:0]   next_state                    					                            ;
+    reg         [7:0]   counter_state_done_time_start_stop    						                ; //for state: start, stop
+    reg                 state_of_write_fifo                                                         ;
+    reg                 state_of_read_fifo                                                          ;
     
     assign ack_bit_o = rev_fifo_full_i                                                              ;
     

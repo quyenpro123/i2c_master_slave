@@ -1,34 +1,34 @@
 module i2c_register_block(
     //-------------------------------slave apb - master apb--------------------------------------------------
-    input                  pclk_i                                                       , //clock 
-    input                  preset_n_i                                                   , //reset signal
-    input                  penable_i                                                    , //enable signal from master to slave
-    input                  psel_i                                                       , //select signal from master to slave
-    input      [7:0]       paddr_i                                                      , //address master send to slave
-    input      [7:0]       pwdata_i                                                     , //data master send to slave
-    input                  pwrite_i                                                     , //read/write signal from master
+    input               pclk_i                                                          , //clock 
+    input               preset_n_i                                                      , //reset signal
+    input               penable_i                                                       , //enable signal from master to slave
+    input               psel_i                                                          , //select signal from master to slave
+    input      [7:0]    paddr_i                                                         , //address master send to slave
+    input      [7:0]    pwdata_i                                                        , //data master send to slave
+    input               pwrite_i                                                        , //read/write signal from master
          
-    output reg [7:0]       prdata_o                                                     , //data slave send to master
-    output reg             pready_o                                                     , //ready signal slave send to master
+    output reg [7:0]    prdata_o                                                        , //data slave send to master
+    output reg          pready_o                                                        , //ready signal slave send to master
 
     //-------------------------------register block - i2c core--------------------------------------------------
-    input      [7:0]       receive_i                                                    , //receive data input from receive fifo
-    input      [7:0]       status_i                                                     , //status input from i2c core, written by i2c core
-    output     [7:0]       prescaler_o                                                  , //output of prescaler register
-    output     [7:0]       cmd_o                                                        , //output of cmd register
-    output     [7:0]       address_rw_o                                                 , //output of address_rw register
-    output     [7:0]       transmit_o                                                   , //output of transmit register for transmit fifo   
-    output reg             tx_fifo_write_enable_o                                       ,    
-    output reg             rx_fifo_read_enable_o                                        
+    input      [7:0]    receive_i                                                       , //receive data input from receive fifo
+    input      [7:0]    status_i                                                        , //status input from i2c core, written by i2c core
+    output     [7:0]    prescaler_o                                                     , //output of prescaler register
+    output     [7:0]    cmd_o                                                           , //output of cmd register
+    output     [7:0]    address_rw_o                                                    , //output of address_rw register
+    output     [7:0]    transmit_o                                                      , //output of transmit register for transmit fifo   
+    output reg          tx_fifo_write_enable_o                                          ,    
+    output reg          rx_fifo_read_enable_o                                        
 );
     //internal register
-    reg [7:0] prescaler                                                                 ; //0x00
-    reg [7:0] cmd                                                                       ; //0x01
-    reg [7:0] transmit                                                                  ; //0x02
-    reg [7:0] receive                                                                   ; //0x03
-    reg [7:0] address_rw                                                                ; //0x04
-    reg [7:0] status                                                                    ; //0x05
-    reg [1:0] counter_read                                                              ; 
+    reg         [7:0]   prescaler                                                       ; //0x00
+    reg         [7:0]   cmd                                                             ; //0x01
+    reg         [7:0]   transmit                                                        ; //0x02
+    reg         [7:0]   receive                                                         ; //0x03
+    reg         [7:0]   address_rw                                                      ; //0x04
+    reg         [7:0]   status                                                          ; //0x05
+    reg         [1:0]   counter_read                                                    ; 
     
 
     assign prescaler_o = prescaler                                                      ; //update output of register internal

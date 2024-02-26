@@ -1,12 +1,13 @@
 module i2c_clock_gen_block(
-    input i2c_core_clock_i                                                                  , //i2c core clock
-    input reset_bit_i                                                                       , //reset signal from cpu
-    input [7:0] prescaler_i                                                                 , //value of prescaler register
-    output scl_o                                                                            , //clock output from clock generator
-    output reg [7:0] counter_detect_edge_o                                                  //counter for detecting edge of scl, 
+    input               i2c_core_clock_i                                                    , //i2c core clock
+    input               reset_bit_i                                                         , //reset signal from cpu
+    input       [7:0]   prescaler_i                                                         , //value of prescaler register
+    output              scl_o                                                               , //clock output from clock generator
+    output reg  [7:0]   counter_detect_edge_o                                                 //counter for detecting edge of scl, 
 );
-    reg [7:0] counter_prescaler_clock                                                       ; // counter i2c core clock to generate scl clock
-    reg temp_scl_o                                                                          ; // temp variable
+    reg         [7:0]   counter_prescaler_clock                                             ; // counter i2c core clock to generate scl clock
+    reg                 temp_scl_o                                                          ; // temp variable
+
     assign scl_o = temp_scl_o                                                               ; // update sda output clock
 
     //count i2c core clock, scl get positive edge when counter detect edge = 2 * prescaler - 1, opposite, counter detect edge = prescaler - 1 
