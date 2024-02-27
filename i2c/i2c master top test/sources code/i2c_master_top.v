@@ -62,7 +62,6 @@ module i2c_master_top(
     wire        [7:0]   cmd                                                             ; //0x01
     wire        [7:0]   transmit                                                        ; //0x02
     wire        [7:0]   address_rw                                                      ; //0x04
-    wire        [7:0]   status                                                          ;
     wire                tx_fifo_write_enable                                            ;
     wire                rx_fifo_read_enable                                             ;
 
@@ -74,7 +73,7 @@ module i2c_master_top(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
         .enable_bit_i(cmd[6])                                                           ,
-        .reset_bit_i(cmd[5])                                                            ,
+        .reset_bit_n_i(cmd[5])                                                          ,
         .rw_bit_i(address_rw[0])                                                        ,
         .sda_i(sda_io)                                                                  ,
         .repeat_start_bit_i(cmd[7])                                                     ,
@@ -84,7 +83,6 @@ module i2c_master_top(
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
         .prescaler_i(prescaler)                                                         ,
-        .read_almost_empty_i(tx_fifo_read_almost_empty)                                 ,
         
         //output
         .start_cnt_o(start_cnt)                                                         ,
@@ -106,7 +104,7 @@ module i2c_master_top(
     i2c_data_path_block data_path(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
-        .reset_bit_i(cmd[5])                                                            ,
+        .reset_bit_n_i(cmd[5])                                                          ,
         .sda_i(sda_io)                                                                  ,
         .data_i(tx_fifo_data_o)                                                         ,
         .addr_rw_i(address_rw)                                                          ,
@@ -132,7 +130,7 @@ module i2c_master_top(
     i2c_clock_gen_block clock_gen(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
-        .reset_bit_i(cmd[5])                                                            ,
+        .reset_bit_n_i(cmd[5])                                                          ,
         .prescaler_i(prescaler)                                                         ,
         
         //output
@@ -162,7 +160,7 @@ module i2c_master_top(
         //input
         .read_clock_i(pclk_i)                                                           ,
         .read_reset_n_i(preset_n_i)                                                     ,
-        .read_inc_i(tx_fifo_write_enable)                                               ,
+        .read_inc_i(rx_fifo_read_enable)                                                ,
         .write_clock_i(i2c_core_clock_i)                                                ,
         .write_reset_n_i(cmd[5])                                                        ,
         .write_inc_i(write_fifo_en)                                                     ,

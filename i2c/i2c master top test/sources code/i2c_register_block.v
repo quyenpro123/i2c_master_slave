@@ -25,9 +25,7 @@ module i2c_register_block(
     reg [7:0] prescaler                                                                 ; //0x00
     reg [7:0] cmd                                                                       ; //0x01
     reg [7:0] transmit                                                                  ; //0x02
-    reg [7:0] receive                                                                   ; //0x03
     reg [7:0] address_rw                                                                ; //0x04
-    reg [7:0] status                                                                    ; //0x05
     reg [1:0] counter_read                                                              ; 
     
 
@@ -38,34 +36,38 @@ module i2c_register_block(
 
     always @(posedge pclk_i) 
     begin
-        receive <= receive_i                                                            ;
-        status <= status_i                                                              ;
         if (~preset_n_i)
             begin
                 //reset internal register
                 prescaler <= 0                                                          ;
                 cmd <= 0                                                                ;
                 transmit <= 0                                                           ;
-                receive <= 0                                                            ;
                 address_rw <= 0                                                         ;
-                status <= 0                                                             ;
                 //reset output apb interface
                 prdata_o <= 0                                                           ;
                 pready_o <= 1                                                           ;
-                counter_read <= 0                                                       ;
-                tx_fifo_write_enable_o <= 0                                             ;
-                rx_fifo_read_enable_o <= 0                                              ;
             end
         else
-            begin
-                if (psel_i == 1 && penable_i == 0)
+                begin
+                    if (psel_i == 1 && penable_i == 0)
                     begin
                         if (pwrite_i == 0)
-                        begin
-                            if (paddr_i == 8'h03)
-                                rx_fifo_read_enable_o <= 1                              ;
-                            counter_read <= 1                                           ;
-                        end
+                                begin
+                                    case (paddr_i)
+                                        8'h00:                                                //read from prescaler register                                 
+                                            prdata_o <= prescaler                       ;
+                                        8'h01:                                                //read from cmd register                                                 
+                                            prdata_o <= cmd                             ;
+                                        8'h02:                                                    //read from transmit register                                                                           
+                                            prdata_o <= transmit                        ;
+                                        8'h03: 
+                                            prdata_o <= receive_i                       ;
+                                        8'h04:                                                //read from address register                                                         
+                                            prdata_o <= address_rw                      ;
+                                        8'h05:                                                //read from status register                    
+                                            prdata_o <= status_i                        ;
+                                    endcase
+                                end
                     end
                 else if (psel_i == 1 && penable_i == 1)
                     begin
@@ -76,45 +78,72 @@ module i2c_register_block(
                                 8'h01:                                                        //write to cmd register                                                 
                                     cmd <= pwdata_i                                     ;                                
                                 8'h02:                                                        //write to transmit register
-                                begin                                                                           
                                     transmit <= pwdata_i                                ;
-                                    tx_fifo_write_enable_o <= 1                         ;
-                                end
                                 //8'h03:                                                       receive register is read only for cpu                                                 
                               
                                 8'h04:                                                        //write to address register                                                         
                                     address_rw <= pwdata_i                              ;
                                 //8'h05:                                                       //status register is read only for cpu                       
                             endcase
-                            
-                        if (pwrite_i == 0)
-                            counter_read <= counter_read + 1                            ;
-                            case (paddr_i)
-                                8'h00:                                                        //read from prescaler register                                 
-                                    prdata_o <= prescaler                               ;
-                                8'h01:                                                        //read from cmd register                                                 
-                                    prdata_o <= cmd                                     ;
-                                8'h02:                                                        //read from transmit register                                                                           
-                                    prdata_o <= transmit                                ;
-                                8'h03: 
-                                begin                                                       //read from receive register                                             
-                                    prdata_o <= receive                                 ;
-                                    rx_fifo_read_enable_o <= 0                          ;
-                                end
-                                8'h04:                                                        //read from address register                                                         
-                                    prdata_o <= address_rw                              ;
-                                8'h05:                                                        //read from status register                    
-                                    prdata_o <= status                                  ;
-                            endcase
+                        
                     end
                 else if (psel_i == 0 && penable_i == 0)
                     begin   
-                        tx_fifo_write_enable_o <= 0                                     ;
-                        if (counter_read > 1)
-                            counter_read <= counter_read + 1                            ;
-                        else
+                        if (counter_read == 3)
                             prdata_o <= 0                                               ;
                     end
             end
     end
+    
+    always @(posedge pclk_i) 
+    begin
+        if (~preset_n_i)
+            begin
+                tx_fifo_write_enable_o <= 0                                             ;
+                rx_fifo_read_enable_o <= 0                                              ;
+            end
+        else
+            begin
+                if (psel_i == 1 && penable_i == 1)
+                    begin
+                        if (pwrite_i == 1 && paddr_i == 8'h02)
+                            tx_fifo_write_enable_o <= 1                                 ;
+                        if (pwrite_i == 0 && paddr_i == 8'h03)
+                            rx_fifo_read_enable_o  <= 1                                 ;
+                    end
+                else if (psel_i == 0 && penable_i == 0)
+                    begin
+                        rx_fifo_read_enable_o <= 0                                      ;
+                        tx_fifo_write_enable_o <= 0                                     ;
+                    end
+            end
+    end
+    
+    //handle counter
+    always @(posedge pclk_i) 
+    begin
+        if (~preset_n_i)
+            begin
+                counter_read <= 0                                                       ;
+            end
+        else
+            begin
+                if (psel_i == 1 && penable_i == 0)
+                    begin
+                        if (pwrite_i == 0)
+                            counter_read <= 1                                           ;
+                    end
+                else if (psel_i == 1 && penable_i == 1)
+                    begin
+                        if (pwrite_i == 0)
+                            counter_read <= counter_read + 1                            ;
+                    end
+                else if (psel_i == 0 && penable_i == 0)
+                    begin   
+                        if (counter_read > 1)
+                            counter_read <= counter_read + 1                            ;
+                    end
+            end
+    end
+    
 endmodule

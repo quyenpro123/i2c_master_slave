@@ -2,7 +2,7 @@ module i2c_fsm_block(
     //---------------------------------------------------------            //----------------------input---------------
     input               i2c_core_clock_i                                                            , // i2c core clock
     input               enable_bit_i                                                                , // enable bit from cmd register                  
-    input               reset_bit_i                                                                 , // reset bit from cmd register	
+    input               reset_bit_n_i                                                               , // reset bit from cmd register	
     input               rw_bit_i                                                                    , //rw bit from addr_rw_bit register   
     input               sda_i                                                                       , // sda line input	
     input               repeat_start_bit_i                                                          , // repeat start bit from cmd register					         
@@ -51,101 +51,22 @@ module i2c_fsm_block(
     reg       state_of_read_tx_fifo                                                                 ;
     assign ack_bit_o = rev_fifo_full_i                                                              ;
     
-     // counter state done time for start, stop condition
-     always @(posedge i2c_core_clock_i, negedge reset_bit_i)
-     begin
-        
-        if (~reset_bit_i)
-            counter_state_done_time_start_stop <= state_done_time_i                                 ;
-        else                         
-                if (current_state == IDLE                                                             //in IDLE state, when master get enable bit-- 
-                    && enable_bit_i == 1 && counter_state_done_time_start_stop != 0)                  //--start counter clock (detail in current_state and input to next_state)
-                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1    ;
-                else if ((current_state == START || current_state == STOP)
-                        && counter_state_done_time_start_stop != 0 && counter_detect_edge_i > (prescaler_i - 1)) //in start or stop state, start counter clock 
-                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1    ;
-                else if (counter_state_done_time_start_stop == 0 
-                        || (current_state == ADDR && counter_state_done_time_start_stop == 1))   
-                    counter_state_done_time_start_stop <= state_done_time_i                         ;
-                else
-                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop        ;
-    end
-    
-    // counter state done time for repeat start condition
-     always @(posedge i2c_core_clock_i, negedge reset_bit_i)
-     begin
-        
-        if (~reset_bit_i)
-            counter_state_done_time_repeat_start_o <= prescaler_i + 1                               ;
-        else
-            if (current_state == REPEAT_START && counter_state_done_time_repeat_start_o != 0 
-                && counter_detect_edge_i > (prescaler_i - 1))                                         //in repeat_start state, start counter clock 
-                counter_state_done_time_repeat_start_o <= counter_state_done_time_repeat_start_o - 1;
-            else if (next_state == REPEAT_START && (current_state == READ_DATA_ACK 
-                    || current_state == READ_ADDR_ACK || current_state == WRITE_DATA_ACK))   
-                counter_state_done_time_repeat_start_o <= prescaler_i + 1                           ;
-    end
-    
-    //output control signals to trans fifo block
-    always @(posedge i2c_core_clock_i, negedge reset_bit_i) 
-    begin
-        if (~reset_bit_i)
-            begin
-                read_fifo_en_o <= 0                                                                 ;
-                state_of_read_tx_fifo <= 0                                                          ;
-            end
-        else
-            begin
-                if (next_state == READ_DATA_ACK && current_state == WRITE_DATA && state_of_read_tx_fifo == 0)
-                    begin
-                        read_fifo_en_o <= 1                                                         ;
-                        state_of_read_tx_fifo <= 1                                                  ;
-                    end
-                else 
-                    read_fifo_en_o <= 0                                                             ;
-                if (current_state == next_state)
-                    state_of_read_tx_fifo <= 0                                                      ;
-            end
-    end
-
-    //output control signals to receive fifo block
-    always @(posedge i2c_core_clock_i, negedge reset_bit_i) 
-    begin
-        if (~reset_bit_i)
-            begin
-                write_fifo_en_o <= 0                                                                ;
-                state_of_write_rx_fifo <= 0                                                         ;
-            end                                                                                                     
-        else
-            begin
-                if (next_state == WRITE_DATA_ACK && current_state == READ_DATA && state_of_write_rx_fifo == 0) //prepare data from trans fifo to send to slave
-                    begin
-                        write_fifo_en_o <= 1                                                        ;
-                        state_of_write_rx_fifo <= 1                                                 ;
-                    end                                                                                  
-                else 
-                    write_fifo_en_o <= 0                                                            ;          
-                if (next_state == current_state)
-                    state_of_write_rx_fifo <= 0                                                     ;
-                
-            end
-    end
+     
     
      //register state logic
-    always @(posedge i2c_core_clock_i, negedge reset_bit_i)
+    always @(posedge i2c_core_clock_i)
     begin
-        
-        if (~reset_bit_i)
+        if (~reset_bit_n_i)
                 current_state <= IDLE					                                            ;		
         else
             if (next_state == STOP && (current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
-                if (counter_detect_edge_i == (prescaler_i - 1))
+                if (counter_detect_edge_i == (prescaler_i))
                     current_state <= next_state				                                        ; //update current state
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == REPEAT_START && (current_state == WRITE_DATA_ACK 
                     || current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
-                if (counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state				                                        ; //update current state
                 else
                     current_state <= current_state                                                  ;
@@ -155,17 +76,17 @@ module i2c_fsm_block(
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == WRITE_DATA  && (current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
-                if (counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state                                                     ;
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == WRITE_DATA_ACK && current_state == READ_DATA)
-                if (counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state                                                     ;
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == READ_DATA && current_state == WRITE_DATA_ACK)
-                if (counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state                                                     ;
                 else
                     current_state <= current_state                                                  ;
@@ -462,5 +383,86 @@ module i2c_fsm_block(
         endcase
     end
     
+    // counter state done time for start, stop condition
+     always @(posedge i2c_core_clock_i)
+     begin
+        
+        if (~reset_bit_n_i)
+            counter_state_done_time_start_stop <= state_done_time_i                                 ;
+        else       
+                if (next_state == IDLE && current_state == STOP && enable_bit_i == 1)
+                      counter_state_done_time_start_stop <= 2 *state_done_time_i                    ;           
+                else if (current_state == IDLE                                                             //in IDLE state, when master get enable bit-- 
+                    && enable_bit_i == 1 && counter_state_done_time_start_stop != 0)                  //--start counter clock (detail in current_state and input to next_state)
+                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1    ;
+                else if ((current_state == START || current_state == STOP)
+                        && counter_state_done_time_start_stop != 0 && counter_detect_edge_i > (prescaler_i - 1)) //in start or stop state, start counter clock 
+                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1    ;
+                else if (counter_state_done_time_start_stop == 0 
+                        || (current_state == ADDR && counter_state_done_time_start_stop == 1))   
+                    counter_state_done_time_start_stop <= state_done_time_i                         ;
+                else
+                    counter_state_done_time_start_stop <= counter_state_done_time_start_stop        ;
+    end
+    
+    // counter state done time for repeat start condition
+     always @(posedge i2c_core_clock_i)
+     begin
+        
+        if (~reset_bit_n_i)
+            counter_state_done_time_repeat_start_o <= prescaler_i + 1                               ;
+        else
+            if (current_state == REPEAT_START && counter_state_done_time_repeat_start_o != 0 
+                && counter_detect_edge_i > (prescaler_i - 1))                                         //in repeat_start state, start counter clock 
+                counter_state_done_time_repeat_start_o <= counter_state_done_time_repeat_start_o - 1;
+            else if (next_state == REPEAT_START && (current_state == READ_DATA_ACK 
+                    || current_state == READ_ADDR_ACK || current_state == WRITE_DATA_ACK))   
+                counter_state_done_time_repeat_start_o <= prescaler_i + 1                           ;
+    end
+    
+    //output control signals to trans fifo block
+    always @(posedge i2c_core_clock_i) 
+    begin
+        if (~reset_bit_n_i)
+            begin
+                read_fifo_en_o <= 0                                                                 ;
+                state_of_read_tx_fifo <= 0                                                          ;
+            end
+        else
+            begin
+                if (next_state == READ_DATA_ACK && current_state == WRITE_DATA && state_of_read_tx_fifo == 0)
+                    begin
+                        read_fifo_en_o <= 1                                                         ;
+                        state_of_read_tx_fifo <= 1                                                  ;
+                    end
+                else 
+                    read_fifo_en_o <= 0                                                             ;
+                if (current_state == next_state)
+                    state_of_read_tx_fifo <= 0                                                      ;
+            end
+    end
+
+    //output control signals to receive fifo block
+    always @(posedge i2c_core_clock_i) 
+    begin
+        if (~reset_bit_n_i)
+            begin
+                write_fifo_en_o <= 0                                                                ;
+                state_of_write_rx_fifo <= 0                                                         ;
+            end                                                                                                     
+        else
+            begin
+                if (next_state == WRITE_DATA_ACK && current_state == READ_DATA && state_of_write_rx_fifo == 0) //prepare data from trans fifo to send to slave
+                    begin
+                        write_fifo_en_o <= 1                                                        ;
+                        state_of_write_rx_fifo <= 1                                                 ;
+                    end                                                                                  
+                else 
+                    write_fifo_en_o <= 0                                                            ;          
+                if (next_state == current_state)
+                    state_of_write_rx_fifo <= 0                                                     ;
+                
+            end
+    end
     
 endmodule 
