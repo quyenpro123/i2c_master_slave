@@ -12,7 +12,6 @@ module i2c_fsm_block(
     input       [7:0]   counter_detect_edge_i                                                       , //counter detect edge from clock generator
     input       [7:0]   counter_data_ack_i                                                          , //counter data, ack from datapath
     input       [7:0]   prescaler_i                                                                 , //value of prescaler register
-    input               read_almost_empty_i                                                         ,
     //---------------------------------------------------------             //----------------------output---------------
     							    
     output reg          start_cnt_o                                                                 , // start signal to datapath and clock generator						    
@@ -33,24 +32,23 @@ module i2c_fsm_block(
     output              ack_bit_o                                                  
     //---------------------------------------------------------
 );
-    localparam          IDLE = 0							                                        ;
-    localparam          START = 1 							                                        ;
-    localparam          ADDR = 2							                                        ;
-    localparam          READ_ADDR_ACK = 3						                                    ;
-    localparam          WRITE_DATA = 4						                                        ;
-    localparam          READ_DATA = 5						                                        ;
-    localparam          READ_DATA_ACK = 6						                                    ;
-    localparam          WRITE_DATA_ACK = 7						                                    ;
-    localparam          REPEAT_START = 8						                                    ;
-    localparam          STOP = 9							                                        ;
+    localparam IDLE = 0							                                                    ;
+    localparam START = 1 							                                                ;
+    localparam ADDR = 2							                                                    ;
+    localparam READ_ADDR_ACK = 3						                                            ;
+    localparam WRITE_DATA = 4						                                                ;
+    localparam READ_DATA = 5						                                                ;
+    localparam READ_DATA_ACK = 6						                                            ;
+    localparam WRITE_DATA_ACK = 7						                                            ;
+    localparam REPEAT_START = 8						                                                ;
+    localparam STOP = 9							                                                    ;
 
 
-    reg         [3:0]   current_state       	               		                                ;
-    reg         [3:0]   next_state                    					                            ;
-    reg         [7:0]   counter_state_done_time_start_stop    						                ; //for state: start, stop
-    reg                 state_of_write_fifo                                                         ;
-    reg                 state_of_read_fifo                                                          ;
-    
+    reg [3:0] current_state       	               		                                            ;
+    reg [3:0] next_state                    					                                    ;
+    reg [7:0] counter_state_done_time_start_stop    						                        ; //for state: start, stop
+    reg       state_of_write_rx_fifo                                                                ;
+    reg       state_of_read_tx_fifo                                                                 ;
     assign ack_bit_o = rev_fifo_full_i                                                              ;
     
      // counter state done time for start, stop condition
@@ -94,20 +92,19 @@ module i2c_fsm_block(
         if (~reset_bit_i)
             begin
                 read_fifo_en_o <= 0                                                                 ;
-                state_of_read_fifo <= 0                                                             ;
+                state_of_read_tx_fifo <= 0                                                          ;
             end
         else
             begin
-                if ((next_state == WRITE_DATA && (current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK)) 
-                    && read_almost_empty_i == 0 && state_of_read_fifo == 0)
+                if (next_state == READ_DATA_ACK && current_state == WRITE_DATA && state_of_read_tx_fifo == 0)
                     begin
                         read_fifo_en_o <= 1                                                         ;
-                        state_of_read_fifo <= 1                                                     ;
+                        state_of_read_tx_fifo <= 1                                                  ;
                     end
-                else
+                else 
                     read_fifo_en_o <= 0                                                             ;
-                if (next_state == current_state)
-                    state_of_read_fifo <= 0                                                         ;
+                if (current_state == next_state)
+                    state_of_read_tx_fifo <= 0                                                      ;
             end
     end
 
@@ -117,19 +114,19 @@ module i2c_fsm_block(
         if (~reset_bit_i)
             begin
                 write_fifo_en_o <= 0                                                                ;
-                state_of_write_fifo <= 0                                                            ;
+                state_of_write_rx_fifo <= 0                                                         ;
             end                                                                                                     
         else
             begin
-                if (next_state == WRITE_DATA_ACK && current_state == READ_DATA && state_of_write_fifo == 0)                                                      //prepare data from trans fifo to send to slave
+                if (next_state == WRITE_DATA_ACK && current_state == READ_DATA && state_of_write_rx_fifo == 0) //prepare data from trans fifo to send to slave
                     begin
                         write_fifo_en_o <= 1                                                        ;
-                        state_of_write_fifo <= 1                                                    ;
+                        state_of_write_rx_fifo <= 1                                                 ;
                     end                                                                                  
                 else 
                     write_fifo_en_o <= 0                                                            ;          
                 if (next_state == current_state)
-                    state_of_write_fifo <= 0                                                        ;
+                    state_of_write_rx_fifo <= 0                                                     ;
                 
             end
     end
@@ -153,7 +150,7 @@ module i2c_fsm_block(
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == READ_ADDR_ACK && current_state == ADDR)
-                if (counter_data_ack_i == 1 && counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state				                                        ; //update current state
                 else
                     current_state <= current_state                                                  ;
@@ -173,7 +170,7 @@ module i2c_fsm_block(
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == READ_DATA_ACK && current_state == WRITE_DATA)                        
-                if (counter_detect_edge_i == prescaler_i - 1)
+                if (counter_detect_edge_i == prescaler_i)
                     current_state <= next_state                                                     ;
                 else
                     current_state <= current_state                                                  ;

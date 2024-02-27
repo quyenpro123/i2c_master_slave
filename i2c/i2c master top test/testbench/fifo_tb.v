@@ -30,7 +30,7 @@ module fifo_tb ();
         .read_almost_empty_o(read_almost_empty_o)                   ,
 
         .write_full_o(write_full_o)                                 ,
-        .write_almost_full_o(write_almost_full_o)                   
+        .write_almost_full_o(write_almost_full_o)
     );
 
     initial 

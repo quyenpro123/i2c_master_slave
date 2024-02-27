@@ -67,8 +67,8 @@ module i2c_master_top(
     wire                rx_fifo_read_enable                                             ;
 
     //tristate   
-    assign sda_io = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
-    assign scl_io = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
+    assign sda_io = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
+    assign scl_io = scl_en == 1 ? clock_gen_scl_o : 1                                   ;
     
     i2c_fsm_block fsm(
         //input
@@ -76,7 +76,7 @@ module i2c_master_top(
         .enable_bit_i(cmd[6])                                                           ,
         .reset_bit_i(cmd[5])                                                            ,
         .rw_bit_i(address_rw[0])                                                        ,
-        .sda_i(sda_io)                                                                   ,
+        .sda_i(sda_io)                                                                  ,
         .repeat_start_bit_i(cmd[7])                                                     ,
         .trans_fifo_empty_i(tx_fifo_read_empty)                                         ,
         .rev_fifo_full_i(rx_fifo_write_full)                                            ,
