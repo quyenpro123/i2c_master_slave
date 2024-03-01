@@ -69,7 +69,7 @@ module i2c_top_tb();
         preset_n_i = 1                                                          ;
 
         #20
-        
+        //--------------------test write + repeat start + read------------------ 
         //cpu write to prescaler register
         #2
         psel_i = 1                                                              ; //#32
@@ -219,6 +219,330 @@ module i2c_top_tb();
         #2
         psel_i = 0                                                              ;
         penable_i = 0                                                           ;
+
+        /* -------------test full write---------------------------------------
+        //cpu write to prescaler register
+        #2
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h00                                                         ;
+        pwdata_i = 8'b00000100                                                  ; //prescaler value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        #10                                                                       
+        //46
+        //cpu write to cmd register to disable reset i2c core
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b00100000                                                  ; //reset command is set
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //50
+        //cpu send address of slave, and read write bit
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h04                                                         ;
+        pwdata_i = 8'haa                                                        ; //address value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //56
+        //cpu send data which is sent to slave
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hab                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //62
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hac                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //68
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'had                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //74
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hae                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //80
+        #2                                                                     
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'haf                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //86
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hfa                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //92
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hea                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        ///98
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h02                                                         ;
+        pwdata_i = 8'hda                                                        ; //data value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //104
+        //cpu enable i2c core and write repeat start bit
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b11100000                                                  ; //cmd register
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //110 
+        #850
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ; 
+        //960
+        #720
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ; 
+        //1680
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        //2400
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        //disable repeat start bit and enable bit
+        #2
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b00100000                                                  ; //cmd register
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        
+        #714                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        */
+
+        /*---------------------------test full read-----------------
+        //cpu write to prescaler register
+        #2
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h00                                                         ;
+        pwdata_i = 8'b00000100                                                  ; //prescaler value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        #10                                                                       
+        //46
+        //cpu write to cmd register to disable reset i2c core
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b00100000                                                  ; //reset command is set
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //50
+        //cpu send address of slave, and read write bit
+        #2                                                                      
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h04                                                         ;
+        pwdata_i = 8'hab                                                        ; //address value
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //56
+        #50
+        //106
+        //cpu enable i2c core and write repeat start bit
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b11100000                                                  ; //cmd register
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        //110 
+        #850
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ; 
+        //960
+        #720
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ; 
+        //1680
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        //2400
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        #720                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        
+        //disable repeat start bit and enable bit
+        #2
+        psel_i = 1                                                              ; 
+        penable_i = 0                                                           ;
+        pwrite_i = 1                                                            ;
+        paddr_i = 8'h01                                                         ;
+        pwdata_i = 8'b00100000                                                  ; //cmd register
+        #2
+        psel_i = 1                                                              ;
+        penable_i = 1                                                           ;
+        #2
+        psel_i = 0                                                              ;
+        penable_i = 0                                                           ;
+        
+        #714                                                                    ;
+        sda_en_tb = 0                                                           ; 
+        sda_o_tb = 0                                                            ;
+        */
     end
     
     //detect start, repeat start
