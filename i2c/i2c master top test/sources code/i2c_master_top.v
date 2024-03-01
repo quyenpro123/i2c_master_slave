@@ -50,7 +50,7 @@ module i2c_master_top(
     wire                tx_fifo_write_full                                              ;
     wire                tx_fifo_write_almost_full                                       ;
 
-    //RX fifo top block internal signal                             
+    //RX fifo top block internal signal
     wire        [7:0]   rx_fifo_data_i                                                  ;
     wire        [7:0]   rx_fifo_data_o                                                  ;
     wire                rx_fifo_read_empty                                              ;
@@ -124,7 +124,7 @@ module i2c_master_top(
         //output
         .sda_o(data_path_sda_o)                                                         ,
         .data_o(rx_fifo_data_i)                                                         ,
-        .counter_data_ack_o(counter_data_ack)                                       
+        .counter_data_ack_o(counter_data_ack)
     );
 
     i2c_clock_gen_block clock_gen(
@@ -135,7 +135,7 @@ module i2c_master_top(
         
         //output
         .scl_o(clock_gen_scl_o)                                                         ,
-        .counter_detect_edge_o(counter_detect_edge)                                 
+        .counter_detect_edge_o(counter_detect_edge)
     );
 
     fifo_top_block tx_fifo(
@@ -153,7 +153,7 @@ module i2c_master_top(
         .read_empty_o(tx_fifo_read_empty)                                               ,
         .read_almost_empty_o(tx_fifo_read_almost_empty)                                 ,
         .write_full_o(tx_fifo_write_full)                                               ,
-        .write_almost_full_o(tx_fifo_write_almost_full)                             
+        .write_almost_full_o(tx_fifo_write_almost_full)
     );
 
     fifo_top_block rx_fifo(
@@ -165,13 +165,13 @@ module i2c_master_top(
         .write_reset_n_i(cmd[5])                                                        ,
         .write_inc_i(write_fifo_en)                                                     ,
         .data_i(rx_fifo_data_i)                                                         ,
-        
+
         //output
         .data_o(rx_fifo_data_o)                                                         ,
         .read_empty_o(rx_fifo_read_empty)                                               ,
         .read_almost_empty_o(rx_fifo_read_almost_empty)                                 ,
         .write_full_o(rx_fifo_write_full)                                               ,
-        .write_almost_full_o(rx_fifo_write_almost_full)                             
+        .write_almost_full_o(rx_fifo_write_almost_full)
     );
     i2c_register_block register(
         //input

@@ -26,27 +26,27 @@ module i2c_fsm_block(
     output reg          write_fifo_en_o                                                             , //signal that datapath write data which read recently into receive fifo
     output reg          read_fifo_en_o                                                              , //signal that datapath read data which cpu want to send to i2c slave from transmit fifo
     					    
-    output reg          scl_en_o				                                                    , // enable scl
+    output reg          scl_en_o                                                                    , // enable scl
     output reg          sda_en_o                                                                    , // enable sda 	
     output reg  [7:0]   counter_state_done_time_repeat_start_o                                      , //for state: repeat start
     output              ack_bit_o                                                  
     //---------------------------------------------------------
 );
-    localparam IDLE = 0							                                                    ;
-    localparam START = 1 							                                                ;
-    localparam ADDR = 2							                                                    ;
-    localparam READ_ADDR_ACK = 3						                                            ;
-    localparam WRITE_DATA = 4						                                                ;
-    localparam READ_DATA = 5						                                                ;
-    localparam READ_DATA_ACK = 6						                                            ;
-    localparam WRITE_DATA_ACK = 7						                                            ;
-    localparam REPEAT_START = 8						                                                ;
-    localparam STOP = 9							                                                    ;
+    localparam IDLE = 0                                                                             ;
+    localparam START = 1                                                                            ;
+    localparam ADDR = 2                                                                             ;
+    localparam READ_ADDR_ACK = 3                                                                    ;
+    localparam WRITE_DATA = 4                                                                       ;
+    localparam READ_DATA = 5                                                                        ;
+    localparam READ_DATA_ACK = 6                                                                    ;
+    localparam WRITE_DATA_ACK = 7                                                                   ;
+    localparam REPEAT_START = 8                                                                     ;
+    localparam STOP = 9                                                                             ;
 
 
-    reg [3:0] current_state       	               		                                            ;
-    reg [3:0] next_state                    					                                    ;
-    reg [7:0] counter_state_done_time_start_stop    						                        ; //for state: start, stop
+    reg [3:0] current_state                                                                         ;
+    reg [3:0] next_state                                                                            ;
+    reg [7:0] counter_state_done_time_start_stop                                                    ; //for state: start, stop
     reg       state_of_write_rx_fifo                                                                ;
     reg       state_of_read_tx_fifo                                                                 ;
     assign ack_bit_o = rev_fifo_full_i                                                              ;
@@ -57,22 +57,22 @@ module i2c_fsm_block(
     always @(posedge i2c_core_clock_i)
     begin
         if (~reset_bit_n_i)
-                current_state <= IDLE					                                            ;		
+                current_state <= IDLE                                                               ;
         else
             if (next_state == STOP && (current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
                 if (counter_detect_edge_i == (prescaler_i))
-                    current_state <= next_state				                                        ; //update current state
+                    current_state <= next_state                                                     ; //update current state
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == REPEAT_START && (current_state == WRITE_DATA_ACK 
                     || current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
                 if (counter_detect_edge_i == prescaler_i)
-                    current_state <= next_state				                                        ; //update current state
+                    current_state <= next_state                                                     ; //update current state
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == READ_ADDR_ACK && current_state == ADDR)
                 if (counter_detect_edge_i == prescaler_i)
-                    current_state <= next_state				                                        ; //update current state
+                    current_state <= next_state                                                     ; //update current state
                 else
                     current_state <= current_state                                                  ;
             else if (next_state == WRITE_DATA  && (current_state == READ_ADDR_ACK || current_state == READ_DATA_ACK))
@@ -232,153 +232,153 @@ module i2c_fsm_block(
         case (current_state)
             //---------------------------------------------------------
             IDLE: begin
-                sda_en_o = 0                                                ;     
-                scl_en_o = 0                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;                          					
+                sda_en_o = 0                                                                        ;
+                scl_en_o = 0                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             START: begin  
-                sda_en_o = 1                                                ;   
-                scl_en_o = 0                                                ;	
-                start_cnt_o = 1                                             ; //fsm inform to data_path and clock_gen generate start condition                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 1                                                                        ;
+                scl_en_o = 0                                                                        ;
+                start_cnt_o = 1                                                                     ; //fsm inform to data_path and clock_gen generate start condition
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             ADDR: begin
-                sda_en_o = 1                                                ;     
-                scl_en_o = 1                                                ;
-                start_cnt_o = 0                                             ;
-                write_addr_cnt_o = 1                                        ; //signal to datapath write addr of slave in sda line                                            							
-                write_ack_cnt_o = 0                                         ;   
-                read_ack_cnt_o = 0                                          ;                                             							                                          							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 1                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 1                                                                ; //signal to datapath write addr of slave in sda line
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             
             end
             //---------------------------------------------------------
             READ_ADDR_ACK: begin
-                sda_en_o = 0                                                ;
-                scl_en_o = 1                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 1                                          ;                                             							                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 0                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 1                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             WRITE_DATA: begin
-                sda_en_o = 1                                                ;      
-                scl_en_o = 1                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							                                             							
-                write_data_cnt_o = 1                                        ; //signal to datapath write data in sda line                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 1                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 1                                                                ; //signal to datapath write data in sda line
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             READ_DATA: begin
-                sda_en_o = 0                                                ;      
-                scl_en_o = 1                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 1                                         ; //signal to datapath read data in sda line when scl in positive edge                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;        
+                sda_en_o = 0                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 1                                                                 ; //signal to datapath read data in sda line when scl in positive edge
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             READ_DATA_ACK: begin
-                sda_en_o = 0                                                ;      
-                scl_en_o = 1                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 1                                          ;                                             							                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 0                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 1                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             WRITE_DATA_ACK: begin
-                sda_en_o = 1                                                ;       
-                scl_en_o = 1                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 1                                         ; //signal to data_path write ack in sda line
-                read_ack_cnt_o = 0                                          ;                                             							                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;                                          					
+                sda_en_o = 1                                                                        ;
+                scl_en_o = 1                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 1                                                                 ; //signal to data_path write ack in sda line
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
             REPEAT_START: begin
-                sda_en_o = 1                                                ;      
+                sda_en_o = 1                                                                        ;
                 if (counter_state_done_time_repeat_start_o <= prescaler_i)
-                    scl_en_o = 0                                            ;
+                    scl_en_o = 0                                                                    ;
                 else
-                    scl_en_o = 1                                            ;		
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 1                                      ; //signal to both data_path and clock_gen to generate repeat start condition  
+                    scl_en_o = 1                                                                    ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 1                                                              ; //signal to both data_path and clock_gen to generate repeat start condition
             end
             //---------------------------------------------------------
             STOP: begin
-                sda_en_o = 1                                                ;
+                sda_en_o = 1                                                                        ;
                 if (counter_state_done_time_start_stop <= state_done_time_i - 1)
-                    scl_en_o = 0                                            ;
+                    scl_en_o = 0                                                                    ;
                 else
-                    scl_en_o = 1                                            ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;
-                read_ack_cnt_o = 0                                          ;                                             							                                             							
-                write_data_cnt_o = 0                                        ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 1                                              ; //signal to both data_path and clock_gen to generate stop condition                                                   						    
-                repeat_start_cnt_o = 0                                      ;                                          					
+                    scl_en_o = 1                                                                    ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                read_ack_cnt_o = 0                                                                  ;
+                write_data_cnt_o = 0                                                                ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 1                                                                      ; //signal to both data_path and clock_gen to generate stop condition
+                repeat_start_cnt_o = 0                                                              ;
             end
             //---------------------------------------------------------
              default: begin
-                sda_en_o = 0                                                ; 
-                scl_en_o = 0                                                ;			
-                start_cnt_o = 0                                             ;                                                						    
-                write_addr_cnt_o = 0                                        ;                                            							
-                write_ack_cnt_o = 0                                         ;                                             							
-                write_data_cnt_o = 0                                        ;
-                read_ack_cnt_o = 0                                          ;                                            							
-                read_data_cnt_o = 0                                         ;                                             						
-                stop_cnt_o = 0                                              ;                                                   						    
-                repeat_start_cnt_o = 0                                      ;
+                sda_en_o = 0                                                                        ;
+                scl_en_o = 0                                                                        ;
+                start_cnt_o = 0                                                                     ;
+                write_addr_cnt_o = 0                                                                ;
+                write_ack_cnt_o = 0                                                                 ;
+                write_data_cnt_o = 0                                                                ;
+                read_ack_cnt_o = 0                                                                  ;
+                read_data_cnt_o = 0                                                                 ;
+                stop_cnt_o = 0                                                                      ;
+                repeat_start_cnt_o = 0                                                              ;
             end
         endcase
     end
@@ -391,7 +391,7 @@ module i2c_fsm_block(
             counter_state_done_time_start_stop <= state_done_time_i                                 ;
         else       
                 if (next_state == IDLE && current_state == STOP && enable_bit_i == 1)
-                      counter_state_done_time_start_stop <= 2 *state_done_time_i                    ;           
+                      counter_state_done_time_start_stop <= 2 *state_done_time_i                    ;
                 else if (current_state == IDLE                                                             //in IDLE state, when master get enable bit-- 
                     && enable_bit_i == 1 && counter_state_done_time_start_stop != 0)                  //--start counter clock (detail in current_state and input to next_state)
                     counter_state_done_time_start_stop <= counter_state_done_time_start_stop - 1    ;
@@ -449,16 +449,16 @@ module i2c_fsm_block(
             begin
                 write_fifo_en_o <= 0                                                                ;
                 state_of_write_rx_fifo <= 0                                                         ;
-            end                                                                                                     
+            end
         else
             begin
                 if (next_state == WRITE_DATA_ACK && current_state == READ_DATA && state_of_write_rx_fifo == 0) //prepare data from trans fifo to send to slave
                     begin
                         write_fifo_en_o <= 1                                                        ;
                         state_of_write_rx_fifo <= 1                                                 ;
-                    end                                                                                  
-                else 
-                    write_fifo_en_o <= 0                                                            ;          
+                    end
+                else
+                    write_fifo_en_o <= 0                                                            ;
                 if (next_state == current_state)
                     state_of_write_rx_fifo <= 0                                                     ;
                 

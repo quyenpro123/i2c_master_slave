@@ -21,36 +21,36 @@ module i2c_master_core_block(
     inout               scl_o
 );
     //fsm block internal signal
-    wire                start_cnt                                                      ;
-    wire                write_addr_cnt                                                 ;
-    wire                write_data_cnt                                                 ;
-    wire                read_data_cnt                                                  ;
-    wire                write_ack_cnt                                                  ;
-    wire                read_ack_cnt                                                   ;
-    wire                stop_cnt                                                       ;
-    wire                repeat_start_cnt                                               ;
-    wire                write_fifo_en                                                  ;
-    wire                read_fifo_en                                                   ;
-    wire                scl_en                                                         ;
-    wire                sda_en                                                         ;
-    wire        [7:0]   counter_state_done_time_repeat_start                           ;
-    wire                ack_bit                                                        ;
+    wire                start_cnt                                                       ;
+    wire                write_addr_cnt                                                  ;
+    wire                write_data_cnt                                                  ;
+    wire                read_data_cnt                                                   ;
+    wire                write_ack_cnt                                                   ;
+    wire                read_ack_cnt                                                    ;
+    wire                stop_cnt                                                        ;
+    wire                repeat_start_cnt                                                ;
+    wire                write_fifo_en                                                   ;
+    wire                read_fifo_en                                                    ;
+    wire                scl_en                                                          ;
+    wire                sda_en                                                          ;
+    wire        [7:0]   counter_state_done_time_repeat_start                            ;
+    wire                ack_bit                                                         ;
 
     
     //clock gen block internal signal
-    wire        [7:0]   counter_detect_edge                                            ;
-    wire                clock_gen_scl_o                                                ;
+    wire        [7:0]   counter_detect_edge                                             ;
+    wire                clock_gen_scl_o                                                 ;
 
     //datapath block internal signal
-    wire                data_path_sda_o                                                ;
-    wire        [7:0]   data_read_from_i2c_slave                                       ;
-    wire        [7:0]   counter_data_ack                                               ;
+    wire                data_path_sda_o                                                 ;
+    wire        [7:0]   data_read_from_i2c_slave                                        ;
+    wire        [7:0]   counter_data_ack                                                ;
    
 
     //tristate   
-    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
-    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                   ;
-    //pullup(sda_o)                                                                    ;
+    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
+    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
+    //pullup(sda_o)                                                                     ;
     
     //update status register
 

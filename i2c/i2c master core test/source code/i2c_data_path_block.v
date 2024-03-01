@@ -1,4 +1,4 @@
-module i2c_datapath_block (
+module i2c_data_path_block (
     input i2c_core_clock_i                                                                      ,
     input reset_bit_n_i                                                                         ,
     input sda_i                                                                                 ,
