@@ -1,7 +1,7 @@
 module fifo_top_block
 #(
     parameter                       data_size = 8                                       , 
-    parameter                       addr_size = 3                                       
+    parameter                       addr_size = 3
 )
 (
     input                           read_clock_i                                        , //clock in read domain 
@@ -27,7 +27,7 @@ module fifo_top_block
     wire        [addr_size:0]       read_to_write_pointer                               ;
     wire        [addr_size:0]       read_pointer                                        ;
     wire        [addr_size:0]       write_pointer                                       ;
-    
+
 
     fifo_mem_block mem(
         .write_clock_i(write_clock_i)                                                   ,
@@ -36,7 +36,7 @@ module fifo_top_block
         .data_i(data_i)                                                                 ,
         .write_addr_i(write_addr)                                                       ,
         .read_addr_i(read_addr)                                                         ,
-        .data_o(data_o)                                                                 
+        .data_o(data_o)
     );
     read_empty_block r_empt(
         .read_clock_i(read_clock_i)                                                     ,
@@ -52,7 +52,7 @@ module fifo_top_block
         .write_clock_i(write_clock_i)                                                   ,
         .write_reset_n_i(write_reset_n_i)                                               ,
         .read_pointer_i(read_pointer)                                                   ,
-        .read_to_write_pointer_o(read_to_write_pointer) 
+        .read_to_write_pointer_o(read_to_write_pointer)
     );
     write_full_block w_full(
         .write_clock_i(write_clock_i)                                                   ,
@@ -62,12 +62,12 @@ module fifo_top_block
         .write_addr_o(write_addr)                                                       ,
         .write_pointer_o(write_pointer)                                                 ,
         .write_full_o(write_full_o)                                                     ,
-        .write_almost_full_o(write_almost_full_o)                                       
+        .write_almost_full_o(write_almost_full_o)
     );
     write_to_read_syn_block w2r(
         .read_clock_i(read_clock_i)                                                     ,
         .read_reset_n_i(read_reset_n_i)                                                 ,
         .write_pointer_i(write_pointer)                                                 ,
-        .write_to_read_pointer_o(write_to_read_pointer)                                  
+        .write_to_read_pointer_o(write_to_read_pointer)
     );
 endmodule

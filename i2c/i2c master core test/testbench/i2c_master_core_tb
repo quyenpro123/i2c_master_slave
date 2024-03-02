@@ -1,8 +1,6 @@
-
-
 module i2c_master_core_tb();
     reg i2c_core_clock_i                                                                ;
-    reg reset_bit_i                                                                     ;
+    reg reset_bit_n_i                                                                   ;
     reg enable_bit_i                                                                    ;
     reg repeat_start_bit_i                                                              ;
     reg trans_fifo_empty_i                                                              ;
@@ -10,17 +8,15 @@ module i2c_master_core_tb();
     reg [7:0]state_done_time_i                                                          ;
     reg [7:0]prescaler_i                                                                ;
     reg read_almost_empty_i                                                             ;
-    reg sda_i                                                                           ;
-    reg ack_bit_i                                                                       ;
     reg [7:0]data_i                                                                     ;
     reg [7:0]addr_rw_i                                                                  ;
 
-    wire sda_o                                                                          ;
-    wire scl_o                                                                          ;
+    wire sda_io                                                                         ;
+    wire scl_io                                                                         ;
     
     i2c_master_core_block master_core(
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
-        .reset_bit_i(reset_bit_i)                                                       ,
+        .reset_bit_n_i(reset_bit_n_i)                                                   ,
         .enable_bit_i(enable_bit_i)                                                     ,
         .repeat_start_bit_i(repeat_start_bit_i)                                         ,
         .trans_fifo_empty_i(trans_fifo_empty_i)                                         ,
@@ -28,19 +24,17 @@ module i2c_master_core_tb();
         .state_done_time_i(state_done_time_i)                                           ,
         .prescaler_i(prescaler_i)                                                       ,
         .read_almost_empty_i(read_almost_empty_i)                                       ,
-        .sda_i(sda_i)                                                                   ,
-        .ack_bit_i(ack_bit_i)                                                           ,
         .data_i(data_i)                                                                 ,
         .addr_rw_i(addr_rw_i)                                                           ,
 
-        .sda_o(sda_o)                                                                   ,
-        .scl_o(scl_o)                                                          
+        .sda_io(sda_io)                                                                 ,
+        .scl_io(scl_io)                                                          
     );
     
     initial 
     begin
             i2c_core_clock_i = 0                                                        ;
-            reset_bit_i = 0                                                             ;
+            reset_bit_n_i = 0                                                           ;
             enable_bit_i = 0                                                            ;
             repeat_start_bit_i = 0                                                      ;
             trans_fifo_empty_i = 0                                                      ;
@@ -48,13 +42,11 @@ module i2c_master_core_tb();
             state_done_time_i = 4                                                       ;
             prescaler_i = 4                                                             ;
             read_almost_empty_i = 0                                                     ;
-            sda_i = 0                                                                   ;
-            ack_bit_i = 1                                                               ;
             data_i = 0                                                                  ;
             addr_rw_i = 0                                                               ;
 
             #20 
-            reset_bit_i = 1                                                             ;
+            reset_bit_n_i = 1                                                           ;
             #17
             enable_bit_i = 1                                                            ; //30
             data_i = 8'b10101011                                                        ;

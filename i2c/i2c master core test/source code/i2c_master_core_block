@@ -1,7 +1,7 @@
 module i2c_master_core_block(
     //fsm input and clock gen input
     input               i2c_core_clock_i                                                ,
-    input               reset_bit_i                                                     ,
+    input               reset_bit_n_i                                                   ,
     input               enable_bit_i                                                    ,
     input               repeat_start_bit_i                                              ,
     input               trans_fifo_empty_i                                              ,
@@ -9,18 +9,16 @@ module i2c_master_core_block(
     input       [7:0]   state_done_time_i                                               ,
     input       [7:0]   prescaler_i                                                     ,
     input               read_almost_empty_i                                             ,
-    input               sda_i                                                           ,
-    input               ack_bit_i                                                       ,
     //data path input
     input       [7:0]   data_i                                                          ,
     input       [7:0]   addr_rw_i                                                       ,
 
     //-------------------------------------------------------------------------------
 
-    inout               sda_o                                                           ,
-    inout               scl_o
+    inout               sda_io                                                          ,
+    inout               scl_io
 );
-    //fsm block internal signal
+     //fsm block internal signal
     wire                start_cnt                                                       ;
     wire                write_addr_cnt                                                  ;
     wire                write_data_cnt                                                  ;
@@ -45,22 +43,19 @@ module i2c_master_core_block(
     wire                data_path_sda_o                                                 ;
     wire        [7:0]   data_read_from_i2c_slave                                        ;
     wire        [7:0]   counter_data_ack                                                ;
-   
 
-    //tristate   
-    assign sda_o = sda_en == 1 ? data_path_sda_o : 1'bz                                 ;
-    assign scl_o = scl_en == 1 ? clock_gen_scl_o : 1                                    ;
-    //pullup(sda_o)                                                                     ;
+
+    assign sda_io = sda_en ? data_path_sda_o : 1'bz                                     ;
+    assign scl_io = scl_en ? clock_gen_scl_o : 1                                        ;
+    pullup(sda_io)                                                                      ;
     
-    //update status register
-
     i2c_fsm_block fsm(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
         .enable_bit_i(enable_bit_i)                                                     ,
-        .reset_bit_i(reset_bit_i)                                                       ,
+        .reset_bit_n_i(reset_bit_n_i)                                                   ,
         .rw_bit_i(addr_rw_i[0])                                                         ,
-        .sda_i(sda_i)                                                                   ,
+        .sda_i(sda_io)                                                                  ,
         .repeat_start_bit_i(repeat_start_bit_i)                                         ,
         .trans_fifo_empty_i(trans_fifo_empty_i)                                         ,
         .rev_fifo_full_i(rev_fifo_full_i)                                               ,    
@@ -68,7 +63,6 @@ module i2c_master_core_block(
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
         .prescaler_i(prescaler_i)                                                       ,
-        .read_almost_empty_i(read_almost_empty_i)                                       ,
         
         //output
         .start_cnt_o(start_cnt)                                                         ,
@@ -83,15 +77,15 @@ module i2c_master_core_block(
         .read_fifo_en_o(read_fifo_en)                                                   ,
         .scl_en_o(scl_en)                                                               ,
         .sda_en_o(sda_en)                                                               ,
-        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)   ,
-        .ack_bit_o(ack_bit)                                                 
+        .ack_bit_o(ack_bit)                                                             ,
+        .counter_state_done_time_repeat_start_o(counter_state_done_time_repeat_start)
     );
 
     i2c_data_path_block data_path(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
-        .reset_bit_i(reset_bit_i)                                                       ,
-        .sda_i(sda_i)                                                                   ,
+        .reset_bit_n_i(reset_bit_n_i)                                                   ,
+        .sda_i(sda_io)                                                                  ,
         .data_i(data_i)                                                                 ,
         .addr_rw_i(addr_rw_i)                                                           ,
         .ack_bit_i(ack_bit)                                                             ,
@@ -116,7 +110,7 @@ module i2c_master_core_block(
     i2c_clock_gen_block clock_gen(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
-        .reset_bit_i(reset_bit_i)                                                       ,
+        .reset_bit_n_i(reset_bit_n_i)                                                   ,
         .prescaler_i(prescaler_i)                                                       ,
         
         //output

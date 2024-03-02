@@ -1,6 +1,6 @@
 module read_empty_block
 #(
-    parameter                       addr_size = 3                               
+    parameter                       addr_size = 3
 )
 (
     input                           read_clock_i                                , //clock in read domain
@@ -24,7 +24,7 @@ module read_empty_block
         read_binary_next = read_binary + (read_inc_i & ~read_empty_o)           ;
         read_gray_next = (read_binary_next >> 1) ^ read_binary_next             ; //compute value of gray code: G3 = G3, G2 = B3 ^ B2, G1 = B2 ^ B1, G0 = B1 ^ B0
         read_gray_next_almost_empty_check = ((read_binary_next + 1) >> 1) 
-                                            ^ (read_binary_next+ 1 )            ;       
+                                            ^ (read_binary_next+ 1 )            ;
     end
 
     always @(posedge read_clock_i, negedge read_reset_n_i) 

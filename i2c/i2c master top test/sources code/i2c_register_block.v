@@ -1,5 +1,5 @@
 module i2c_register_block(
-    //-------------------------------slave apb - master apb--------------------------------------------------
+    //-------------------------------slave apb - master apb------------------------------
     input                  pclk_i                                                       , //clock 
     input                  preset_n_i                                                   , //reset signal
     input                  penable_i                                                    , //enable signal from master to slave
@@ -11,7 +11,7 @@ module i2c_register_block(
     output reg [7:0]       prdata_o                                                     , //data slave send to master
     output reg             pready_o                                                     , //ready signal slave send to master
 
-    //-------------------------------register block - i2c core--------------------------------------------------
+    //-------------------------------register block - i2c core---------------------------
     input      [7:0]       receive_i                                                    , //receive data input from receive fifo
     input      [7:0]       status_i                                                     , //status input from i2c core, written by i2c core
     output     [7:0]       prescaler_o                                                  , //output of prescaler register
@@ -54,17 +54,17 @@ module i2c_register_block(
                         if (pwrite_i == 0)
                                 begin
                                     case (paddr_i)
-                                        8'h00:                                                //read from prescaler register                                 
+                                        8'h00:                                            //read from prescaler register
                                             prdata_o <= prescaler                       ;
-                                        8'h01:                                                //read from cmd register                                                 
+                                        8'h01:                                            //read from cmd register
                                             prdata_o <= cmd                             ;
-                                        8'h02:                                                    //read from transmit register                                                                           
+                                        8'h02:                                            //read from transmit register
                                             prdata_o <= transmit                        ;
-                                        8'h03: 
+                                        8'h03:                                            //read from receive register
                                             prdata_o <= receive_i                       ;
-                                        8'h04:                                                //read from address register                                                         
+                                        8'h04:                                            //read from address register
                                             prdata_o <= address_rw                      ;
-                                        8'h05:                                                //read from status register                    
+                                        8'h05:                                            //read from status register
                                             prdata_o <= status_i                        ;
                                     endcase
                                 end
@@ -73,24 +73,19 @@ module i2c_register_block(
                     begin
                         if (pwrite_i == 1)
                             case (paddr_i)
-                                8'h00:                                                        //write to prescaler register                                 
+                                8'h00:                                                    //write to prescaler register                                 
                                     prescaler <= pwdata_i                               ;
-                                8'h01:                                                        //write to cmd register                                                 
+                                8'h01:                                                    //write to cmd register                                                 
                                     cmd <= pwdata_i                                     ;                                
-                                8'h02:                                                        //write to transmit register
+                                8'h02:                                                    //write to transmit register
                                     transmit <= pwdata_i                                ;
-                                //8'h03:                                                       receive register is read only for cpu                                                 
+                                //8'h03:                                                  receive register is read only for cpu                                                 
                               
-                                8'h04:                                                        //write to address register                                                         
+                                8'h04:                                                    //write to address register                                                         
                                     address_rw <= pwdata_i                              ;
-                                //8'h05:                                                       //status register is read only for cpu                       
+                                //8'h05:                                                   //status register is read only for cpu                       
                             endcase
                         
-                    end
-                else if (psel_i == 0 && penable_i == 0)
-                    begin   
-                        if (counter_read == 3)
-                            prdata_o <= 0                                               ;
                     end
             end
     end
@@ -115,33 +110,6 @@ module i2c_register_block(
                     begin
                         rx_fifo_read_enable_o <= 0                                      ;
                         tx_fifo_write_enable_o <= 0                                     ;
-                    end
-            end
-    end
-    
-    //handle counter
-    always @(posedge pclk_i) 
-    begin
-        if (~preset_n_i)
-            begin
-                counter_read <= 0                                                       ;
-            end
-        else
-            begin
-                if (psel_i == 1 && penable_i == 0)
-                    begin
-                        if (pwrite_i == 0)
-                            counter_read <= 1                                           ;
-                    end
-                else if (psel_i == 1 && penable_i == 1)
-                    begin
-                        if (pwrite_i == 0)
-                            counter_read <= counter_read + 1                            ;
-                    end
-                else if (psel_i == 0 && penable_i == 0)
-                    begin   
-                        if (counter_read > 1)
-                            counter_read <= counter_read + 1                            ;
                     end
             end
     end
