@@ -19,13 +19,13 @@
 |receive|0x03|8|R|save data in from slave to master|
 |address_rw|0x04|8|RW|address of slave and read write bit cpu send to i2c master|
 |status|0x05|8|R|status of fifo, bus,...| 
-#### b. Register detail
-#### * Prescaler register
+#### b. Register details
+##### * Prescaler register
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|RW|value of division clock equal to i2c_core_clock / (2 * scl_clock)|
 
-#### * Cmd register 
+##### * Cmd register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7|RW|Repeat start bit active high|
@@ -33,34 +33,34 @@
 |5|RW|Reset i2c core active low|
 |4:0|RW|Reserved|
 
-#### * Transmit register 
+##### * Transmit register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|RW|save data cpu want to transfer to i2c slave|
 
-#### * Receive register 
+##### * Receive register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|R|save data i2c slave send|
 
-#### * Address register 
+##### * Address register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:1|RW|address of i2c slave|
 |0|RW|read write bit: "1" - read, "0" - write|
 
-#### * Status register 
+##### * Status register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7|R|read ACK, "1" - NACK, "0" - ACK|
 |6|R|Busy bus, "1" after Start condition, "0" after Stop condition|
 
 #### c. APB interface
-#### * Waveform write
+##### * Waveform write
 ![apb write data](/illustrating%20images/apb_write.png)
-#### * Waveform read
+##### * Waveform read
 ![apb read data](/illustrating%20images/apb_read.png)
-#### * Simulates combined reading and writing
+##### * Simulates combined reading and writing
 ![apb simulation](/illustrating%20images/abp_simulation.png)
 
 ## III. Simulation I2C Top
