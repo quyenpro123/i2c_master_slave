@@ -20,12 +20,12 @@
 |address_rw|0x04|8|RW|address of slave and read write bit cpu send to i2c master|
 |status|0x05|8|R|status of fifo, bus,...| 
 #### b. Register detail
-#### * prescaler register
+#### * Prescaler register
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|RW|value of division clock equal to i2c_core_clock / (2 * scl_clock)|
 
-#### * cmd register 
+#### * Cmd register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7|RW|Repeat start bit active high|
@@ -33,17 +33,17 @@
 |5|RW|Reset i2c core active low|
 |4:0|RW|Reserved|
 
-#### * transmit register 
+#### * Transmit register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|RW|save data cpu want to transfer to i2c slave|
 
-#### * receive register 
+#### * Receive register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|R|save data i2c slave send|
 
-#### * address register 
+#### * Address register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:1|RW|address of i2c slave|
@@ -56,15 +56,15 @@
 |6|R|Busy bus, "1" after Start condition, "0" after Stop condition|
 
 #### c. APB interface
-#### * waveform write
+#### * Waveform write
 ![apb write data](/illustrating%20images/apb_write.png)
-#### * waveform read
+#### * Waveform read
 ![apb read data](/illustrating%20images/apb_read.png)
-#### * simulation combined read and write 
+#### * Simulates combined reading and writing
 ![apb simulation](/illustrating%20images/abp_simulation.png)
 
 ## III. Simulation I2C Top
-### 1. configuration for I2C Core
+### 1. Configuration for I2C Core
  - apb master write to the prescaler register(0x00) the value 0x04
  - apb master write to the cmd register(0x01) the value 0x20 to disable reset i2c core
  - apb master write to the address_rw register(0x04) - address of slave and read/write bit
