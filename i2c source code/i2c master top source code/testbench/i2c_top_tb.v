@@ -156,9 +156,10 @@ module i2c_top_tb();
         #816
         sda_en_tb = 0                                                           ; 
         sda_o_tb = 0                                                            ; //900 
-        #730
+        #710
         sda_en_tb = 0                                                           ; 
-        sda_o_tb = 0                                                            ; //1620
+        sda_o_tb = 0                                                            ; //1600
+        #20
         //cpu want read data from slave
         #2
         psel_i = 1                                                              ; 
@@ -174,10 +175,10 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
         
         
-        #694                                                                    ;//2330
+        #684                                                                    ;//2320
         sda_en_tb = 0                                                           ;
         sda_o_tb = 0                                                            ;
-        #210
+        #220
         //disable repeat start bit and enable bit
         #2
         psel_i = 1                                                              ; 
