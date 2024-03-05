@@ -184,7 +184,7 @@ module i2c_master_top(
         .pwrite_i(pwrite_i)                                                             ,
         .receive_i(rx_fifo_data_o)                                                      ,
         .status_i({2'b00, tx_fifo_read_empty, rx_fifo_write_full, 4'b0000})             ,
-
+        .stop_cnt_i(stop_cnt)                                                           ,
         //output
         .prdata_o(prdata_o)                                                             ,
         .pready_o(pready_o)                                                             ,

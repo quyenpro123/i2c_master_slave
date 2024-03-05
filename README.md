@@ -84,4 +84,4 @@
  - Next, enable reset i2c core to set all variables, reg to the default value
  - Disable reset i2c core, and transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase)
  - Next enable i2c core and i2c core will perform its tasks
- - While i2c core is running, cpu can configure in cmd register (e.g: disable repeat start, disable enable), address_rw and transmit register (e.g: change address of slave and want to read or write new data)
+ - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core
