@@ -65,7 +65,7 @@ module i2c_data_path_block (
     end
 
     //handle when datapath read
-    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
+    always @(posedge i2c_core_clock_i) 
     begin
         if (~reset_bit_n_i)
             data_o <= 0                                                                         ;

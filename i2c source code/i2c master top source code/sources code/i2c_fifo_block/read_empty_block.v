@@ -27,7 +27,7 @@ module read_empty_block
                                             ^ (read_binary_next+ 1 )            ;
     end
 
-    always @(posedge read_clock_i, negedge read_reset_n_i) 
+    always @(posedge read_clock_i) 
     begin
         if (~read_reset_n_i)
             {read_binary, read_pointer_o} <= 0                                  ;
@@ -35,7 +35,7 @@ module read_empty_block
             {read_binary, read_pointer_o} <= {read_binary_next, read_gray_next} ;
     end
     
-    always @(posedge read_clock_i, negedge read_reset_n_i) 
+    always @(posedge read_clock_i) 
     begin
         if (~read_reset_n_i)
             begin
