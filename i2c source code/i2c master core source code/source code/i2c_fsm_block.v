@@ -1,12 +1,12 @@
 module i2c_fsm_block(
     //---------------------------------------------------------            //----------------------input---------------
     input               i2c_core_clock_i                                                            , // i2c core clock
-    input               enable_bit_i                                                                , // enable bit from cmd register                  
-    input               reset_bit_n_i                                                               , // reset bit from cmd register	
-    input               rw_bit_i                                                                    , //rw bit from addr_rw_bit register   
+    input               enable_bit_i                                                                , // enable bit from cmd register
+    input               reset_bit_n_i                                                               , // reset bit from cmd register
+    input               rw_bit_i                                                                    , //rw bit from addr_rw_bit register
     input               sda_i                                                                       , // sda line input	
-    input               repeat_start_bit_i                                                          , // repeat start bit from cmd register					         
-    input               trans_fifo_empty_i                                                          , // status of trans fifo from fifo block 					         
+    input               repeat_start_bit_i                                                          , // repeat start bit from cmd register
+    input               trans_fifo_empty_i                                                          , // status of trans fifo from fifo block
     input               rev_fifo_full_i                                                             , // status of rev fifo from fifo block
     input       [7:0]   state_done_time_i                                                           , //state done time 
     input       [7:0]   counter_detect_edge_i                                                       , //counter detect edge from clock generator
@@ -15,19 +15,19 @@ module i2c_fsm_block(
     //---------------------------------------------------------             //----------------------output---------------
     							    
     output reg          start_cnt_o                                                                 , // start signal to datapath and clock generator						    
-    output reg          write_addr_cnt_o                                                            , // write addr signal to datapath and clock generator to transfer addr of slave												
-    output reg          write_data_cnt_o                                                            , // write data signal to datapath and clock generator to transfer data 						
+    output reg          write_addr_cnt_o                                                            , // write addr signal to datapath and clock generator to transfer addr of slave
+    output reg          write_data_cnt_o                                                            , // write data signal to datapath and clock generator to transfer data
     output reg          read_data_cnt_o                                                             , // read data signal to datapath and clock generator to read data 
-    output reg          write_ack_cnt_o                                                             , // after read data is done, master send ack bit					
+    output reg          write_ack_cnt_o                                                             , // after read data is done, master send ack bit
     output reg          read_ack_cnt_o                                                              , //read ack from slave
-    output reg          stop_cnt_o                                                                  , // stop signal to datapath and clock generator 	
+    output reg          stop_cnt_o                                                                  , // stop signal to datapath and clock generator
     output reg          repeat_start_cnt_o                                                          , // repeat start signal to datapath and clock generator
     
     output reg          write_fifo_en_o                                                             , //signal that datapath write data which read recently into receive fifo
     output reg          read_fifo_en_o                                                              , //signal that datapath read data which cpu want to send to i2c slave from transmit fifo
     					    
     output reg          scl_en_o                                                                    , // enable scl
-    output reg          sda_en_o                                                                    , // enable sda 	
+    output reg          sda_en_o                                                                    , // enable sda
     output reg  [7:0]   counter_state_done_time_repeat_start_o                                      , //for state: repeat start
     output              ack_bit_o                                                  
     //---------------------------------------------------------
@@ -121,7 +121,7 @@ module i2c_fsm_block(
                 if (counter_data_ack_i == 1)
                     next_state = READ_ADDR_ACK                                                      ;
                 else if (next_state == READ_ADDR_ACK)
-                    next_state = next_state                                                         ;
+                    next_state = READ_ADDR_ACK                                                      ;
                 else    
                     next_state = ADDR                                                               ;
             end 

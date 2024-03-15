@@ -121,7 +121,7 @@ module i2c_fsm_block(
                 if (counter_data_ack_i == 1)
                     next_state = READ_ADDR_ACK                                                      ;
                 else if (next_state == READ_ADDR_ACK)
-                    next_state = next_state                                                         ;
+                    next_state = READ_ADDR_ACK                                                      ;
                 else    
                     next_state = ADDR                                                               ;
             end 

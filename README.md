@@ -31,7 +31,7 @@
 |7|RW|Repeat start bit active high|
 |6|RW|Enable i2c core active high|
 |5|RW|Reset i2c core active low|
-|4:0|RW|Reserved|
+|4:0|RW|State done time(Usually greater than or equal to 4-core clock) |
 
 ##### * Transmit register 
 |Bit|Access|Description|
@@ -81,7 +81,8 @@
 ![simulation i2c read data](/illustrating%20images/i2c_read_data.png)
 ## IV. User Guide 
  - First register need to be configured is prescaler register
- - Next, enable reset i2c core to set all variables, reg to the default value
+ - Next, configure the state done time in cmd register
+ - Next, enable reset i2c core to set all variables, reg to the default value 
  - Disable reset i2c core, and transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase)
  - Next enable i2c core and i2c core will perform its tasks
  - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core
