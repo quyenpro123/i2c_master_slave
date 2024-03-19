@@ -79,10 +79,21 @@
  - I2C master write address and read write bit, i2c slave (build in testbench) read address to check and write ACK
  - I2C slave write data want to send to master in the sda line, i2c master get data and save this data in rx fifo until rx fifo full
 ![simulation i2c read data](/illustrating%20images/i2c_read_data.png)
-## IV. User Guide 
- - First register need to be configured is prescaler register
- - Next, configure the state done time in cmd register
- - Next, enable reset i2c core to set all variables, reg to the default value 
- - Disable reset i2c core, and transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase)
- - Next enable i2c core and i2c core will perform its tasks
- - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core
+## IV. User Guide
+|INPUT|OUTPUT|
+|:---:|:----:|
+|i2c_core_clock|scl|
+|pclk|sda|
+|p_reset_n|pready
+|penable|prdata[7:0]|
+|psel|
+|paddr[7:0]|
+|pwdata[7:0]|
+|pwrite|
+
+ - First register need to be configured is prescaler register.
+ - Next, configure the state done time in cmd register.
+ - Next, enable reset i2c core to set all variables, regs to the default value.
+ - Disable reset i2c core, and transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase).
+ - Next enable i2c core and i2c core will perform its tasks.
+ - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core.
