@@ -94,6 +94,6 @@
  - First register need to be configured is prescaler register.
  - Next, configure the state done time in cmd register.
  - Next, enable reset i2c core to set all variables, regs to the default value.
- - Disable reset i2c core, and transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase).
+ - Transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase).
  - Next enable i2c core and i2c core will perform its tasks.
- - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core.
+ - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core (address of slave, rw bit, data).
