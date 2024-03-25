@@ -1,0 +1,3 @@
+class environment;
+
+endclass

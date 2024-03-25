@@ -1,0 +1,3 @@
+class assertion;
+    
+endclass //className

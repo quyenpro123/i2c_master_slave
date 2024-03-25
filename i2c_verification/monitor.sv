@@ -1,0 +1,3 @@
+class monitor;
+
+endclass
