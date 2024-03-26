@@ -1,5 +1,6 @@
 `ifndef GEN
 `define GEN
+`include "transactor.sv"
 class generator;
     rand transactor trans;
     mailbox gen2driv;

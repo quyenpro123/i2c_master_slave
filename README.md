@@ -15,7 +15,7 @@
 |:----:|:---:|:---:|:----:|:------|
 |prescaler|0x00|8|RW|Equal to i2c_core_clock / (2 * scl_clock)| 
 |cmd|0x01|8|RW|Command from cpu to i2c core|
-|transmit|0x02|8|R|Save data from cpu to master for transfer to slave|
+|transmit|0x02|8|RW|Save data from cpu to master for transfer to slave|
 |receive|0x03|8|R|Save data in from slave to master|
 |address_rw|0x04|8|RW|Address of slave and read write bit cpu send to i2c master|
 |status|0x05|8|R|Status of fifo, bus,...| 
