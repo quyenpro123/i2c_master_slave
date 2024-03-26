@@ -6,6 +6,9 @@
 module top_tb ();
     reg pclk = 0;
     reg i2c_core_clock = 0;
+    preset = 0;
     always #5 pclk = ~pclk;
     always #20 i2c_core_clock = ~i2c_core_clock;
+    
+    intf intf(pclk, preset, i2c_core_clock)
 endmodule

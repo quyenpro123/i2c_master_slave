@@ -1,5 +1,6 @@
 `ifndef TEST_1
 `define TEST_1
+`include "environment.sv"
 program testcase(intf intf);
     environment env;
 

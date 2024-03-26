@@ -1,5 +1,7 @@
 `ifndef ENV
 `define ENV
+`include "driver.sv"
+`include "generator.sv"
 class environment;
     generator gen;
     driver driv;
