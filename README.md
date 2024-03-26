@@ -24,7 +24,7 @@
 |Bit|Access|Description|
 |:-:|:----:|:---------|
 |7:0|RW|Value of division clock equal to i2c_core_clock / (2 * scl_clock)|
-
+    - The default value: 0x04
 ##### * Cmd register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|
@@ -32,7 +32,7 @@
 |6|RW|Enable i2c core active high|
 |5|RW|Reset i2c core active low|
 |4:0|RW|State done time(Usually greater than or equal to 4-core clock) |
-
+    - The default value: 0x04, when cpu write to cmd register without configuring state done time, cmd[4:0] need to be unvariable.
 ##### * Transmit register 
 |Bit|Access|Description|
 |:-:|:----:|:---------|

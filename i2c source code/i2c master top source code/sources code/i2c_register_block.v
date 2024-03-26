@@ -40,8 +40,8 @@ module i2c_register_block(
         if (~preset_n_i)
             begin
                 //reset internal register
-                prescaler <= 0                                                          ;
-                cmd <= 0                                                                ;
+                prescaler <= 8'h04                                                      ;
+                cmd <= 8'h04                                                            ;
                 transmit <= 0                                                           ;
                 address_rw <= 0                                                         ;
                 //reset output apb interface

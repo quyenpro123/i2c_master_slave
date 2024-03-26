@@ -1,3 +1,5 @@
+`ifndef INTF
+`define ITNF
 interface intf(input logic pclk, preset, i2c_core_clock);
     //input dut
     logic [7:0] paddr;
@@ -13,3 +15,4 @@ interface intf(input logic pclk, preset, i2c_core_clock);
     logic [7:0] prdata_o;
     logic pready_o;
 endinterface
+`endif

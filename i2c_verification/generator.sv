@@ -1,3 +1,5 @@
+`ifndef GEN
+`define GEN
 class generator;
     rand transactor trans;
     mailbox gen2driv;
@@ -7,13 +9,14 @@ class generator;
         this.gen2driv = gen2driv;
     endfunction
 
-    task  main();
+    task main();
         repeat(repeat_random) begin
             trans = new();
-            if (!trans.randomize())
+            if (!trans.randomize()) 
                 $fatal("gen trans randomization fail");
             gen2driv.put(trans);   
         end
         -> ended;
     endtask //
 endclass 
+`endif 
