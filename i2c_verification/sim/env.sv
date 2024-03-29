@@ -39,7 +39,7 @@
 
     task post();
         wait(gen.ended.triggered);
-        wait(gen.repeat_random == 100);
+	wait(gen.repeat_random == driv.no_transaction);
     endtask
 
     task main();

@@ -21,11 +21,11 @@
 
     task apb_reset();
         @ (negedge vif.pclk);
-        vif.preset <= 1;
+        vif.preset = 1;
         @ (negedge vif.pclk);
-        vif.preset <= 0;
+        vif.preset = 0;
         @ (negedge vif.pclk);
-        vif.preset <= 1;
+        vif.preset = 1;
     endtask
 
     task apb_write(logic [7:0] paddr, logic [7:0] pwdata);
