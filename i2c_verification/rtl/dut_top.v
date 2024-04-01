@@ -1,27 +1,30 @@
-module dut_top(
-    input               i2c_core_clock_i                                                ,
+module dut_top
+#(
+    parameter                           DATA_SIZE = 8	    ,
+    parameter                           ADDR_SIZE = 8
+)
+(
+    input                               i2c_core_clk_i      ,   // clock core of i2c
+    input                               pclk_i              ,   //  APB clock
+    input                               preset_n_i          ,   //  reset signal is active-LOW
+    input   [ADDR_SIZE - 1 : 0]         paddr_i             ,   //  address of APB slave and register map
+    input                               pwrite_i            ,   //  HIGH is write, LOW is read
+    input                               psel_i              ,   //  select slave interface
+    input                               penable_i           ,   //  Enable. PENABLE indicates the second and subsequent cycles of an APB transfer.
+    input   [DATA_SIZE - 1 : 0]         pwdata_i            ,   //  data write
 
-    input               pclk_i                                                          , //apb clock
-    input               preset_n_i                                                      , //apb reset
-    input               penable_i                                                       ,
-    input               psel_i                                                          ,
-    input       [7:0]   paddr_i                                                         ,
-    input       [7:0]   pwdata_i                                                        ,
-    input               pwrite_i                                                        ,
+    output  [DATA_SIZE - 1 : 0]         prdata_o            ,   //  data read
+    output                              pready_o            ,   //  ready to receive data
+    output                              start               ,
+    output                              stop                ,
+    inout                               sda_io              ,
+    inout                               scl_io
+);
 
-    //----------------------------------------------------------------------------------
-    output      [7:0]   prdata_o                                                        ,
-    output              pready_o                                                        ,
-    inout               sda_io                                                          ,
-    inout               scl_io
-    );
-    
-    pullup(sda_io);
-
-    i2c_master_top master(
-        .i2c_core_clock_i(i2c_core_clock_i)                                             ,
+    i2c_top master(
+        .i2c_core_clk_i(i2c_core_clk_i)                                                 ,
         .pclk_i(pclk_i)                                                                 ,
-        .preset_n_i(preset_n_i)                                                         ,
+        .preset_ni(preset_n_i)                                                         	,
         .penable_i(penable_i)                                                           ,
         .psel_i(psel_i)                                                                 ,
         .paddr_i(paddr_i)                                                               ,
@@ -29,12 +32,15 @@ module dut_top(
         .pwrite_i(pwrite_i)                                                             ,
         .prdata_o(prdata_o)                                                             ,
         .pready_o(pready_o)                                                             ,
-        .sda_io(sda_io)                                                                 ,
-        .scl_io(scl_io)
+        .sda(sda_io)                                                                    ,
+        .scl(scl_io)
     );
 
     i2c_slave_model slave(
-        .sda_io(sda_io)                                                                 ,
-        .scl_io(scl_io)
+        .sda(sda_io)                                                                    ,
+        .scl(scl_io)                                                                    ,
+        .start(start)                                                                   ,
+        .stop(stop)
     );
+
 endmodule

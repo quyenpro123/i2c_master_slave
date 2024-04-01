@@ -54,7 +54,7 @@ module i2c_fsm_block(
      
     
      //register state logic
-    always @(posedge i2c_core_clock_i)
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i)
     begin
         if (~reset_bit_n_i)
                 current_state <= IDLE                                                               ;
@@ -384,7 +384,7 @@ module i2c_fsm_block(
     end
     
     // counter state done time for start, stop condition
-     always @(posedge i2c_core_clock_i)
+     always @(posedge i2c_core_clock_i, negedge reset_bit_n_i)
      begin
         
         if (~reset_bit_n_i)
@@ -406,7 +406,7 @@ module i2c_fsm_block(
     end
     
     // counter state done time for repeat start condition
-     always @(posedge i2c_core_clock_i)
+     always @(posedge i2c_core_clock_i, negedge reset_bit_n_i)
      begin
         
         if (~reset_bit_n_i)
@@ -421,7 +421,7 @@ module i2c_fsm_block(
     end
     
     //output control signals to trans fifo block
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             begin
@@ -443,7 +443,7 @@ module i2c_fsm_block(
     end
 
     //output control signals to receive fifo block
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             begin

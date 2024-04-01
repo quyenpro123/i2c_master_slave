@@ -25,7 +25,7 @@ module i2c_data_path_block (
     assign sda_o = temp_sda_o                                                                   ; //update sda
     
     //handle counter data, ack
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             counter_data_ack_o <= 9                                                             ;
@@ -40,7 +40,7 @@ module i2c_data_path_block (
     end
 
     //handle sda when datapath write
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             temp_sda_o <= 1                                                                     ;
@@ -65,7 +65,7 @@ module i2c_data_path_block (
     end
 
     //handle when datapath read
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             data_o <= 0                                                                         ;

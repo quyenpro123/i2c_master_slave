@@ -1,12 +1,3 @@
-////////////////////////////////////////////////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////s           www.testbench.in           s////
-////s                                      s////
-////s        SystemVerilog Tutorial        s////
-////s                                      s////
-////s           gopi@testbench.in          s////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////////////////////////////////////////////////
 `include "transactor.sv"
 `include "generator.sv"
 `include "interface.sv"
@@ -16,6 +7,8 @@
 
 `ifdef TEST_1_2
   `include "test_1_2.sv"
+`elsif TEST_2
+  `include "test_2.sv"
 `elsif TEST_3
   `include "test_3.sv"
 `elsif TEST_4
@@ -34,14 +27,18 @@
   `include "test_10.sv"
 `elsif TEST_11
   `include "test_11.sv"
+`elsif TEST_12
+  `include "test_12.sv"
+`elsif TEST_13
+  `include "test_13.sv"
 `endif
   module top();
       reg pclk = 0;
       reg i2c_core_clock = 0;
-      always #10 i2c_core_clock = ~i2c_core_clock ;
-      always #2 pclk = ~pclk;
+      always #20 i2c_core_clock = ~i2c_core_clock ;
+      always #5 pclk = ~pclk;
       // DUT/assertion monitor/testcase instances
-      intf_cnt vif(pclk, i2c_core_clock );
+      intf_cnt vif(pclk, i2c_core_clock);
       assertion_cov acov(vif);
       dut_top dut(
         .i2c_core_clk_i(vif.i2c_core_clock), 
@@ -55,7 +52,9 @@
         .prdata_o(vif.prdata_o),
         .pready_o(vif.pready_o),
         .sda_io(vif.sda_io),
-        .scl_io(vif.scl_io)
+        .scl_io(vif.scl_io),
+        .stop(vif.stop),
+        .start(vif.start)
     );
     testcase test(vif);
     assertion_cov assert_cov(vif);

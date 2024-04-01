@@ -11,7 +11,7 @@ module read_to_write_syn_block
 );
     reg         [addr_size:0]       temp_read_to_write_pointer                  ; //temp variable for synchronize read -> write
 
-    always @(posedge write_clock_i) 
+    always @(posedge write_clock_i, negedge write_reset_n_i) 
     begin
         if (~write_reset_n_i)
             {read_to_write_pointer_o, temp_read_to_write_pointer} <= 0          ;

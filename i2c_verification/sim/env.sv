@@ -1,22 +1,11 @@
-////////////////////////////////////////////////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////s           www.testbench.in           s////
-////s                                      s////
-////s        SystemVerilog Tutorial        s////
-////s                                      s////
-////s           gopi@testbench.in          s////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////////////////////////////////////////////////
 `ifndef ENV
 `define ENV
-    `include "driver.sv"
+`include "driver.sv"
 `include "generator.sv"
-    class environment;
-           generator gen;
+class environment;
+    generator gen;
     driver driv;
-
     mailbox gen2driv;
-
     virtual intf_cnt vif;
 
     function new(virtual intf_cnt vif);
@@ -39,7 +28,7 @@
 
     task post();
         wait(gen.ended.triggered);
-	wait(gen.repeat_random == driv.no_transaction);
+        wait(gen.repeat_random == driv.no_transaction);
     endtask
 
     task main();
@@ -47,5 +36,5 @@
         test();
         post();
     endtask
-     endclass
+endclass
 `endif

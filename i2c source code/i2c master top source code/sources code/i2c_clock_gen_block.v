@@ -9,7 +9,7 @@ module i2c_clock_gen_block(
     assign scl_o = temp_scl_o                                                               ; // update sda output clock
 
     //count i2c core clock, scl get positive edge when counter detect edge = 2 * prescaler - 1, opposite, counter detect edge = prescaler - 1
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             counter_detect_edge_o <= (2 * prescaler_i - 1)                                  ;
@@ -21,7 +21,7 @@ module i2c_clock_gen_block(
     end
 
     //gen scl clock
-    always @(posedge i2c_core_clock_i) 
+    always @(posedge i2c_core_clock_i, negedge reset_bit_n_i) 
     begin
         if (~reset_bit_n_i)
             temp_scl_o <= 1                                                                 ;

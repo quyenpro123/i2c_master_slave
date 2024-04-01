@@ -60,8 +60,10 @@ module i2c_master_top(
     wire        [7:0]   cmd                                                             ; //0x01
     wire        [7:0]   transmit                                                        ; //0x02
     wire        [7:0]   address_rw                                                      ; //0x04
+    wire        [7:0]   status                                                          ;
     wire                tx_fifo_write_enable                                            ;
     wire                rx_fifo_read_enable                                             ;
+    assign status = {2'b00, tx_fifo_read_empty, rx_fifo_write_full, 4'b0000}            ;
 
     //tristate   
     assign sda_io = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
@@ -181,7 +183,7 @@ module i2c_master_top(
         .pwdata_i(pwdata_i)                                                             ,
         .pwrite_i(pwrite_i)                                                             ,
         .receive_i(rx_fifo_data_o)                                                      ,
-        .status_i({2'b00, tx_fifo_read_empty, rx_fifo_write_full, 4'b0000})             ,
+        .status_i(status)                                                               ,
         .stop_cnt_i(stop_cnt)                                                           ,
         //output
         .prdata_o(prdata_o)                                                             ,

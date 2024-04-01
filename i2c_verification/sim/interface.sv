@@ -24,5 +24,7 @@ interface intf_cnt(input logic pclk, input logic i2c_core_clock);
     wire scl_io;
     logic [7:0] prdata_o;
     logic pready_o;
+    logic stop;
+    logic start;
 endinterface
 `endif

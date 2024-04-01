@@ -27,7 +27,7 @@ module write_full_block
                                         ^ (write_binary_next + 1)                                                       ;
     end
 
-    always @(posedge write_clock_i) 
+    always @(posedge write_clock_i, negedge write_reset_n_i) 
     begin
         if (~write_reset_n_i)
             {write_binary, write_pointer_o} <= 0                                                                        ;
@@ -35,7 +35,7 @@ module write_full_block
             {write_binary, write_pointer_o} <= {write_binary_next, write_gray_next}                                     ;
     end
 
-    always @(posedge write_clock_i) 
+    always @(posedge write_clock_i, negedge write_reset_n_i) 
     begin
         if (~write_reset_n_i)
             begin

@@ -27,7 +27,6 @@ module i2c_register_block(
     reg [7:0] cmd                                                                       ; //0x01
     reg [7:0] transmit                                                                  ; //0x02
     reg [7:0] address_rw                                                                ; //0x04
-    reg [1:0] counter_read                                                              ; 
     
 
     assign prescaler_o = prescaler                                                      ; //update output of register internal
@@ -35,7 +34,7 @@ module i2c_register_block(
     assign address_rw_o = address_rw                                                    ;
     assign transmit_o = transmit                                                        ;
 
-    always @(posedge pclk_i) 
+    always @(posedge pclk_i, negedge preset_n_i) 
     begin
         if (~preset_n_i)
             begin
@@ -94,7 +93,7 @@ module i2c_register_block(
                     end
     end
     
-    always @(posedge pclk_i) 
+    always @(posedge pclk_i, negedge preset_n_i) 
     begin
         if (~preset_n_i)
             begin

@@ -8,7 +8,8 @@ program testcase(intf_cnt intf);
         #30
         env.gen.trans = new();
         env.driv.apb_write(0, 8'h00);
-        repeat (18)
+        env.driv.apb_write(0, 8'hff);
+        repeat (17)
         begin
             if (env.gen.trans.randomize())
                 env.driv.apb_write(0, env.gen.trans.pwdata);
@@ -19,8 +20,13 @@ program testcase(intf_cnt intf);
         env.driv.apb_write(4, 8'hc0);
 	wait(intf.start);
 	wait(intf.stop);
-	env.driv.apb_write(3, 8'h22);
+	env.driv.apb_write(3, 8'h21);
 	env.driv.apb_write(4, 8'hc0);
+
+	wait(intf.start);
+	wait(intf.stop);
+	repeat (20)
+		env.driv.apb_read(1);
         #100000
         env.driv.apb_reset();
     end
