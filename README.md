@@ -91,7 +91,8 @@
 |pwdata[7:0]|
 |pwrite|
 
- - First register need to be configured is prescaler register.
+ - Prescaler register is optional for configuration.
+ - State done time in cmd register is optional for configuration.
  - Next, configure the state done time in cmd register.
  - Next, enable reset i2c core to set all variables, regs to the default value.
  - Transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase).

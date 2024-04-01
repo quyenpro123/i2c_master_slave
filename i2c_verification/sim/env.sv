@@ -14,7 +14,7 @@ class environment;
         gen = new(gen2driv);
         driv = new(vif, gen2driv);
     endfunction
-    
+
     task apb_reset;
         driv.apb_reset();
     endtask

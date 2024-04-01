@@ -1,22 +1,23 @@
 QuestaSim-64 vlog 2021.2_1 Compiler 2021.05 May 15 2021
-Start time: 09:21:49 on Mar 26,2024
+Start time: 10:36:20 on Apr 01,2024
 vlog -64 -sv "+acc" -incr -f filelist_rtl.f -l vlog_rtl.log "+cover=sbceft" -assertdebug 
 -- Compiling module dut_top
 -- Scanning library directory '../rtl'
--- Compiling module i2c_master_top
+-- Compiling module i2c_top
 -- Compiling module i2c_slave_model
--- Compiling module i2c_fsm_block
--- Compiling module i2c_data_path_block
--- Compiling module i2c_clock_gen_block
--- Compiling module fifo_top_block
--- Compiling module i2c_register_block
--- Compiling module fifo_mem_block
--- Compiling module read_empty_block
--- Compiling module read_to_write_syn_block
--- Compiling module write_full_block
--- Compiling module write_to_read_syn_block
+-- Compiling module clock_generator
+-- Compiling module i2c_master_fsm
+-- Compiling module data_path_i2c_to_core
+-- Compiling module data_fifo_mem
+-- Compiling module apb_slave_interface
+-- Compiling module fifo_toplevel
+-- Compiling module fifo_mem
+-- Compiling module rptr_empty
+-- Compiling module wptr_full
+-- Compiling module sync_r2w
+-- Compiling module sync_w2r
 
 Top level modules:
 	dut_top
-End time: 09:21:49 on Mar 26,2024, Elapsed time: 0:00:00
+End time: 10:36:20 on Apr 01,2024, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0

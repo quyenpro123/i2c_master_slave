@@ -1,4 +1,7 @@
-//i2c master write n times
+//i2c master write n bytes
+//repeat start
+//i2c master read n bytes
+
 program testcase(intf_cnt intf);
     environment env = new(intf);
    

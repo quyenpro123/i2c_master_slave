@@ -1,4 +1,3 @@
-//apb read write function
 program testcase(intf_cnt intf);
   environment env = new(intf);
 
@@ -10,6 +9,7 @@ program testcase(intf_cnt intf);
         env.driv.apb_write(3, 8'h22);
         env.driv.apb_write(4, 8'h33);
         env.driv.apb_write(5, 8'h44); 
+
         env.driv.apb_read(0);
         env.driv.apb_read(3);
         env.driv.apb_read(4);
