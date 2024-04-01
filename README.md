@@ -30,7 +30,7 @@
 |:-:|:----:|:---------|
 |7|RW|Repeat start bit active high|
 |6|RW|Enable i2c core active high|
-|5|RW|Reset sync i2c core active low|
+|5|RW|Reset async i2c core active low|
 |4:0|RW|State done time(Usually greater than or equal to 4-core clock) |
     - The default value: 0x04, when cpu write to cmd register without configuring state done time, cmd[4:0] need to be unvariable.
 ##### * Transmit register 
