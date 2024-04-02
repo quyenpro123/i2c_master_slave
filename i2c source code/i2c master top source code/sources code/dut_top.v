@@ -12,6 +12,8 @@ module dut_top(
     //----------------------------------------------------------------------------------
     output      [7:0]   prdata_o                                                        ,
     output              pready_o                                                        ,
+    output              start                                                           ,
+    output              stop                                                            ,
     inout               sda_io                                                          ,
     inout               scl_io
     );
@@ -35,6 +37,8 @@ module dut_top(
 
     i2c_slave_model slave(
         .sda(sda_io)                                                                    ,
-        .scl(scl_io)
+        .scl(scl_io)                                                                    ,
+        .start(start)                                                                   ,
+        .stop(stop)
     );
 endmodule

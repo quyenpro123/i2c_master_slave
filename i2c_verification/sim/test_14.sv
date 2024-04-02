@@ -1,4 +1,4 @@
-//APB master write continously data to transfifo, exceed the depth of transfifo
+//random situiation
 program testcase(intf_cnt intf);
   environment env = new(intf);
 
@@ -16,7 +16,7 @@ program testcase(intf_cnt intf);
         end
 
         env.driv.apb_write(3, 8'h20);
-        env.driv.apb_write(5, 8'h06);
+        env.driv.apb_write(5, 8'h4);
         env.driv.apb_write(4, 8'hc0);
         wait(intf.start);
         wait(intf.stop);

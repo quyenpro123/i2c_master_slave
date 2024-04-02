@@ -1,12 +1,3 @@
-////////////////////////////////////////////////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////s           www.testbench.in           s////
-////s                                      s////
-////s        SystemVerilog Tutorial        s////
-////s                                      s////
-////s           gopi@testbench.in          s////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////////////////////////////////////////////////
 `include "transactor.sv"
 `include "generator.sv"
 `include "interface.sv"
@@ -62,6 +53,8 @@
         .pready_o(vif.pready_o),
         .sda_io(vif.sda_io),
         .scl_io(vif.scl_io),
+        .data_slave_read(vif.data_slave_read),
+        .data_slave_read_valid(vif.data_slave_read_valid),
         .stop(vif.stop),
         .start(vif.start)
     );

@@ -1,5 +1,5 @@
 QuestaSim-64 vlog 2021.2_1 Compiler 2021.05 May 15 2021
-Start time: 10:36:20 on Apr 01,2024
+Start time: 10:45:43 on Apr 02,2024
 vlog -64 -sv "+acc" -incr -f filelist_rtl.f -l vlog_rtl.log "+cover=sbceft" -assertdebug 
 -- Compiling module dut_top
 -- Scanning library directory '../rtl'
@@ -19,5 +19,5 @@ vlog -64 -sv "+acc" -incr -f filelist_rtl.f -l vlog_rtl.log "+cover=sbceft" -ass
 
 Top level modules:
 	dut_top
-End time: 10:36:20 on Apr 01,2024, Elapsed time: 0:00:00
+End time: 10:45:43 on Apr 02,2024, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0

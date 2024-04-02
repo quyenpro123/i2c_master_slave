@@ -1,16 +1,5 @@
-////////////////////////////////////////////////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////s           www.testbench.in           s////
-////s                                      s////
-////s        SystemVerilog Tutorial        s////
-////s                                      s////
-////s           gopi@testbench.in          s////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////////////////////////////////////////////////
 `ifndef INTF
 `define INTF
-
-
 interface intf_cnt(input logic pclk, input logic i2c_core_clock);
     //input dut
     logic preset;
@@ -24,6 +13,10 @@ interface intf_cnt(input logic pclk, input logic i2c_core_clock);
     wire scl_io;
     logic [7:0] prdata_o;
     logic pready_o;
+
+    //slave output
+    logic [7:0] data_slave_read;
+    logic data_slave_read_valid;
     logic stop;
     logic start;
 endinterface

@@ -17,6 +17,10 @@ program testcase(intf_cnt intf);
         env.driv.apb_write(3, 8'h20);
         env.driv.apb_write(5, 8'h4);
         env.driv.apb_write(4, 8'hc0);
+        wait(intf.start);
+        wait(intf.stop);
+        env.driv.apb_write(3, 8'h22);
+        env.driv.apb_write(4, 8'hc0);
         #100000
         env.driv.apb_reset();
     end

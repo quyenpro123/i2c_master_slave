@@ -14,6 +14,7 @@ program testcase(intf_cnt intf);
         env.driv.apb_read(3);
         env.driv.apb_read(4);
         env.driv.apb_read(5);
+        env.driv.apb_read(6);
         #1000
         env.driv.apb_reset();
     end

@@ -81,7 +81,7 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
         pwrite_i = 1                                                            ;
         paddr_i = 8'h04                                                         ;
-        pwdata_i = 8'h20                                                  ; //address value
+        pwdata_i = 8'h20                                                        ; //address value
         #2
         psel_i = 1                                                              ;
         penable_i = 1                                                           ;
@@ -95,7 +95,7 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
         pwrite_i = 1                                                            ;
         paddr_i = 8'h02                                                         ;
-        pwdata_i = 8'h00                                                  ; //data value
+        pwdata_i = 8'h00                                                        ; //data value
         #2
         psel_i = 1                                                              ;
         penable_i = 1                                                           ;
@@ -242,7 +242,7 @@ module i2c_top_tb();
         penable_i = 0                                                           ;
     end
     
-    always #1 pclk_i = ~pclk_i                                                   ;
-    always #5 i2c_core_clock_i = ~i2c_core_clock_i                               ;
+    always #1 pclk_i = ~pclk_i                                                  ;
+    always #5 i2c_core_clock_i = ~i2c_core_clock_i                              ;
 
 endmodule

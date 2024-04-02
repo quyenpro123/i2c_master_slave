@@ -11,23 +11,22 @@ program testcase(intf_cnt intf);
         #30
         env.driv.apb_write(0, 8'h0);
         env.driv.apb_write(0, 8'h11);
-        env.driv.apb_write(0, 8'h0);
+        env.driv.apb_write(0, 8'h22);
         env.driv.apb_write(0, 8'h33);
-        env.driv.apb_write(0, 8'h0);
+        env.driv.apb_write(0, 8'h44);
         env.driv.apb_write(0, 8'h55);
 
         env.driv.apb_write(3, 8'h20);
-        env.driv.apb_write(5, 8'h4);
+        env.driv.apb_write(5, 8'h08);
+        env.driv.apb_write(4, 8'hc0);
+        @(posedge intf.start);
+	@(posedge intf.stop);
+        env.driv.apb_write(3, 8'h21);
         env.driv.apb_write(4, 8'hc0);
 
-        #2400
-        env.driv.apb_write(4, 8'hc0);
-        #2400
-        env.driv.apb_write(4, 8'hc0);
-        #2400
-        env.driv.apb_write(4, 8'hc0);
-        #2400
-        env.driv.apb_write(4, 8'hc0);
+        #1500
+        //disable repeat start
+        
         #100000
         env.driv.apb_reset();   
     end
