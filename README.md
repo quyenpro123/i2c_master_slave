@@ -93,8 +93,7 @@
 
  - Prescaler register is optional for configuration.
  - State done time in cmd register is optional for configuration.
- - Next, configure the state done time in cmd register.
- - Next, enable reset i2c core to set all variables, regs to the default value.
+ - Enable reset i2c core to set all variables, regs to the default value.
  - Transfer address of i2c slave and read write bit (if cpu wants to write, cpu can transfer data before writing phase).
- - Next enable i2c core and i2c core will perform its tasks.
+ - Next, enable i2c core and i2c core will perform its tasks.
  - After stop condition, if cpu want to communicate with i2c slave, cpu have to reconfigure i2c core (address of slave, rw bit, data).

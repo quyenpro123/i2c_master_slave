@@ -1,6 +1,6 @@
+//apb write and read
 program testcase(intf_cnt intf);
   environment env = new(intf);
-
     initial 
     begin
         env.driv.apb_reset();

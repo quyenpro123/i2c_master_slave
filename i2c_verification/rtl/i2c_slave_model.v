@@ -267,7 +267,7 @@ module i2c_slave_model (scl, sda, start, stop);
 	                        state <= #1 data_ack;
 	                        mem_adr <= #2 mem_adr < 15 ? mem_adr + 8'h1 : 0;
 	                        
-				sda_o <= #1 (rw && mem_adr < 15); // send ack on write, receive ack on read
+							sda_o <= #1 (rw && mem_adr < 15); // send ack on write, receive ack on read
 	                        if(rw)
 	                          begin
 				      
@@ -278,10 +278,10 @@ module i2c_slave_model (scl, sda, start, stop);
 
 	                        if(!rw)
 	                          begin
-	                              mem[ mem_adr[3:0] ] <= #1 sr; // store data in memory
-				      sda_o <= #1 !(mem_adr < 15);
-	                              if(debug)
-	                                #2 $display("DEBUG i2c_slave; data block write %x to address %x", sr, mem_adr);
+									mem[ mem_adr[3:0] ] <= #1 sr; // store data in memory
+									sda_o <= #1 !(mem_adr < 4);
+									if(debug)
+									#2 $display("DEBUG i2c_slave; data block write %x to address %x", sr, mem_adr);
 	                          end
 	                    end
 	              end

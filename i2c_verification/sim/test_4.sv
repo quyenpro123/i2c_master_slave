@@ -1,12 +1,4 @@
-////////////////////////////////////////////////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////s           www.testbench.in           s////
-////s                                      s////
-////s        SystemVerilog Tutorial        s////
-////s                                      s////
-////s           gopi@testbench.in          s////
-////s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~s////
-////////////////////////////////////////////////
+//i2c core reset suddenly
 
 program testcase(intf_cnt intf);
   environment env = new(intf);
@@ -15,7 +7,7 @@ program testcase(intf_cnt intf);
     begin
         env.driv.apb_reset();
         #30
-        env.driv.apb_write(0, 8'h0);
+        env.driv.apb_write(0, 8'h00);
         env.driv.apb_write(0, 8'h11);
         env.driv.apb_write(0, 8'h22);
         env.driv.apb_write(0, 8'h33);
