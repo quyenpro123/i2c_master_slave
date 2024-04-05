@@ -8,6 +8,7 @@ program testcase(intf_cnt intf);
     initial 
     begin
         env.driv.apb_read(0);
+        
         env.driv.apb_read(3);
         env.driv.apb_read(4);
         env.driv.apb_read(5);

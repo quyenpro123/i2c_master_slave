@@ -19,5 +19,6 @@ interface intf_cnt(input logic pclk, input logic i2c_core_clock);
     logic data_slave_read_valid;
     logic stop;
     logic start;
+    logic [7:0] data_master [15:0];
 endinterface
 `endif

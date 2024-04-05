@@ -4,13 +4,12 @@
 class generator;
     rand transactor trans;
     mailbox gen2driv;
-    int repeat_random;
     event ended;
     function new(mailbox gen2driv);
         this.gen2driv = gen2driv;
     endfunction
 
-    task main();
+    task main(int repeat_random);
         repeat(repeat_random) begin
             trans = new();
             if (!trans.randomize()) 

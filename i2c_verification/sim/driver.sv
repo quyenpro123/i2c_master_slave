@@ -11,8 +11,7 @@
     endfunction //new()
 
     task apb_reset();
-        @ (negedge vif.pclk);
-        vif.preset = 1;
+        vif.preset = 0;
         @ (negedge vif.pclk);
         vif.preset = 0;
         @ (negedge vif.pclk);
@@ -50,6 +49,17 @@
         @(posedge vif.pclk);
         vif.psel <= 0;
         vif.penable <= 0;
+    endtask
+
+    task random_data(int repeat_random);
+	int i = 0;
+	repeat(repeat_random)
+	begin
+	    transactor trans;
+            gen2driv.get(trans);
+	    this.vif.data_master[i] = trans.pwdata;
+	    i = i + 1;
+	end
     endtask
 
     task main;

@@ -1,4 +1,4 @@
-//random situiation
+//combination of 1 write and 1 read
 program testcase(intf_cnt intf);
   environment env = new(intf);
 
@@ -8,25 +8,25 @@ program testcase(intf_cnt intf);
         #30
         env.gen.trans = new();
         env.driv.apb_write(0, 8'h00);
-        env.driv.apb_write(0, 8'hff);
-        repeat (17)
-        begin
-            if (env.gen.trans.randomize())
-                env.driv.apb_write(0, env.gen.trans.pwdata);
-        end
+        env.driv.apb_write(0, 8'h11);
 
         env.driv.apb_write(3, 8'h20);
         env.driv.apb_write(5, 8'h4);
-        env.driv.apb_write(4, 8'hc0);
-        wait(intf.start);
-        wait(intf.stop);
-        env.driv.apb_write(3, 8'h21);
-        env.driv.apb_write(4, 8'hc0);
+        env.driv.apb_write(4, 8'he0);
 
-        wait(intf.start);
-        wait(intf.stop);
-        repeat (20)
-        env.driv.apb_read(1);
+        @(posedge intf.start);
+        @(posedge intf.start);
+
+        env.driv.apb_write(3, 8'h21);
+        env.driv.apb_write(4, 8'he0);
+	
+        @(posedge intf.start);
+	env.driv.apb_write(3, 8'h20);
+        env.driv.apb_write(4, 8'he0);
+
+	@(posedge intf.start);
+	env.driv.apb_write(3, 8'h20);
+        env.driv.apb_write(4, 8'hc0);
         #100000
         env.driv.apb_reset();
     end

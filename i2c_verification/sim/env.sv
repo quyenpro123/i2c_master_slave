@@ -19,22 +19,11 @@ class environment;
         driv.apb_reset();
     endtask
 
-    task test();
-        fork
-            gen.main();
-            driv.main();
-        join_any
+    task gen_data_random(int repeat_random);
+        gen.main(repeat_random);
+	    wait(gen.ended.triggered);
+	    driv.random_data(repeat_random);
     endtask
 
-    task post();
-        wait(gen.ended.triggered);
-        wait(gen.repeat_random == driv.no_transaction);
-    endtask
-
-    task main();
-        apb_reset();
-        test();
-        post();
-    endtask
 endclass
 `endif
