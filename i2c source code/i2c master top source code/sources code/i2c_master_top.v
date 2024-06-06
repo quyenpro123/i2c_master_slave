@@ -12,6 +12,7 @@ module i2c_master_top(
     //----------------------------------------------------------------------------------
     output      [7:0]   prdata_o                                                        ,
     output              pready_o                                                        ,
+    output              reset                                                           ,
     inout               sda_io                                                          ,
     inout               scl_io
 );
@@ -63,12 +64,12 @@ module i2c_master_top(
     wire        [7:0]   status                                                          ;
     wire                tx_fifo_write_enable                                            ;
     wire                rx_fifo_read_enable                                             ;
-    assign status = {2'b00, tx_fifo_read_empty, rx_fifo_write_full, 4'b0000}            ;
+    assign status = {tx_fifo_read_empty, rx_fifo_write_full, 6'b000000}            ;
 
     //tristate   
     assign sda_io = sda_en == 1 ? data_path_sda_o : 1'bz                                ;
     assign scl_io = scl_en == 1 ? clock_gen_scl_o : 1                                   ;
-    
+    assign reset = cmd[5]                                                               ;
     i2c_fsm_block fsm(
         //input
         .i2c_core_clock_i(i2c_core_clock_i)                                             ,
@@ -79,7 +80,6 @@ module i2c_master_top(
         .repeat_start_bit_i(cmd[7])                                                     ,
         .trans_fifo_empty_i(tx_fifo_read_empty)                                         ,
         .rev_fifo_full_i(rx_fifo_write_full)                                            ,
-        .state_done_time_i({3'b0,cmd[4:0]})                                             ,
         .counter_detect_edge_i(counter_detect_edge)                                     ,
         .counter_data_ack_i(counter_data_ack)                                           ,
         .prescaler_i(prescaler)                                                         ,
